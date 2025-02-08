@@ -1,0 +1,76 @@
+.hero2 {
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    padding: 80px 20px;
+  }
+  
+  .hero2::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Overlay for contrast */
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .hero2 h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  
+  .hero2 p {
+    margin-top: 16px;
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+  
+  .hero-buttons {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .hero2 button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hero2 button:hover {
+    transform: translateY(-2px);
+  }
+  
+  .hero2 .btn-primary {
+    background-color: #1d4ed8;
+    color: white;
+  }
+  
+  .hero2 .btn-primary:hover {
+    background-color: #2563eb;
+  }
+  
+  .hero2 .btn-secondary {
+    background-color: #4b5563;
+    color: white;
+  }
+  
+  .hero2 .btn-secondary:hover {
+    background-color: #374151;
+  }
+  

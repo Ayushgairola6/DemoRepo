@@ -1,0 +1,29 @@
+const express= require("express");
+const app = express();
+const cors = require("cors");
+const bodyParser = require("body-parser")
+const feed_Router = require("./Routers/FeedRouter");
+const User_Router = require("./Routers/UserRouter");
+// cors to establish a connection between front end and backend
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
+// Parse application/x-www-form-urlencoded app.use(bodyParser.urlencoded({ extended: false })); 
+ app.use(bodyParser.json());
+ 
+ 
+ // Parse application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({ extended: false}));
+// getting the server access to the routes
+app.use(feed_Router.route.FeedRouter);
+app.use(User_Router.Route.UserRouter);
+
+// Create an HTTP server
+
+
+
+
+// listen the server at port 8080
+app.listen(8080,'localhost',()=>{
+	console.log("server connected")
+})

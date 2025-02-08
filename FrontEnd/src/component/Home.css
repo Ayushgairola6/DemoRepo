@@ -1,0 +1,463 @@
+
+
+.main-header { 
+    display: flex; 
+    justify-content: space-evenly; 
+    align-items: center; 
+    padding: 0.3rem;
+} 
+.container{
+    position: relative;
+ 
+ height: 100vh;
+
+}
+.navlinks{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    font-weight: 600;
+    font-size: small;
+
+
+}
+.Search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem
+}
+.main-header img { 
+    height: 2rem; 
+    cursor: pointer; 
+    border-radius: 50%;
+    margin-top:6px;
+} 
+.main-header input{
+    border-radius: 12px;
+    font-weight: 400;
+    border: 1px solid lightgray;
+    width: 6rem;
+    transition: width 0.2s linear;
+    background: linear-gradient(45deg , whitesmoke,ghostwhite);
+    text-align: center;
+}
+.main-header input:focus{
+    width: 8rem;
+    border: 2px solid skyblue;
+    outline: none;
+}
+
+.main-header #link{
+    text-decoration: none;
+    cursor: pointer;
+     transition: scale 0.2s ease-in;
+     padding: 0.1rem 0.3rem;
+}
+.main-header #link:hover{
+    scale: 1.2;
+    background-color: black;
+    border-radius: 15px;
+    color: white;
+    
+
+}
+
+.main-header button{
+    border-radius: 15px;
+   width: 5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: none;
+    text-align: center;
+    padding: 0.3rem;
+}
+
+
+
+
+.hero {
+    text-align: center; 
+    background: none; 
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    /*border: 2px solid red;*/
+} 
+
+.headings{
+padding: 0.3rem;
+
+}
+.carousel {
+    margin: auto;
+    height: 90%;
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+}
+
+.carousel-track {
+    display: flex;
+    animation: scroll 30s linear infinite;
+}
+
+.carousel-track img {
+    /*width: 100%;*/
+    height: 100vh;
+    flex-shrink: 0;
+    position: center;
+
+}
+
+#sidebarMenu{
+    display: none;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-300%);
+    }
+}
+
+
+.headings h1{
+  text-transform: uppercase;
+  font-size:4.5rem;
+  font-weight: 550;
+ /*color: #9a1f40;*/
+}
+.headings h3{
+    /*color: #ff7f50;*/
+}
+.headings span{
+     /*background: linear-gradient(to right,mediumblue,steelblue);*/
+     background: linear-gradient(to right,#9a1f40,#ff7f50);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+ animation: shine 3s linear infinite;
+ background-size: 200%;
+}
+
+@keyframes shine{
+0%{
+    background-position: -200%;
+}
+100%{
+    background-position: 200%;
+}
+}
+
+#heart{
+    position: absolute;
+    z-index: -1;
+    transform: rotate(25deg);
+    right: 1rem;
+    bottom:3rem;
+    mix-blend-mode: multiply;
+    height: 10rem;
+}
+.headings h3{
+    text-transform: uppercase;
+    font-size: 1.4rem;
+
+}
+
+
+.Sidebar{
+    position: fixed;
+    top: 0;
+    right: 0;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: normal;
+    flex-direction: column;
+    gap: 1.3rem;
+    height: 100vh;
+    z-index: 999;
+    width: 15rem;
+    background: linear-gradient(140deg ,#f0f0f0,lightcyan);
+    border: 1px solid black;
+    border-radius: 12px;
+    transform: translateX(0);
+    transition: transform 0.3s linear ;
+}
+
+.close{
+    position: absolute;
+    left: 2rem;
+    top: 1rem;
+}
+.first{
+    margin-top: 3rem;
+}
+
+.Sidebar #link{
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+.Sidebar #link:hover{
+    background: dimgray;
+    color: white;
+}
+
+
+.
+.footer { 
+   background: linear-gradient(to right ,lightpink,lightgray);
+   border-top: 1px solid black;
+   opacity: 0.7;
+  text-align: center;
+   height: 12rem;  
+
+
+} 
+.link{
+    display: flex;
+    align-items: center;
+  justify-content: space-evenly;
+
+}
+.link div{
+    padding: 0.3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+
+.features{
+   display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+        min-height: 100vh;
+}
+
+.features h3{
+    font-size: 2rem;
+}
+.features h3:hover{
+    text-decoration: underline;
+}
+
+ .cards-container{
+   display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.3rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cards-container div{
+  
+    background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod);
+    border:0.1px solid darkred;
+
+    width: 20rem;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  
+    padding: 1rem;
+    box-sizing: border-box;
+   transition: box-shadow 0.3s ease-in ;
+}
+.cards-container div:hover{
+  box-shadow: 2px 2px 2px black;
+  /*transform: scale(1.2);*/
+}
+.cards-container div span{
+   font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+.cards-container div p{
+ font-size: smaller;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+.footer a { 
+    text-decoration: none; 
+    font-weight: 500;
+    color: black;
+} 
+
+
+
+
+
+
+@media(max-width: 1000px){
+  #sidebarMenu{
+    display: block;
+  }
+  
+  .navlinks{
+    display: none;
+  }
+  .carousel{
+
+  }
+  .hero{
+    flex-direction: column-reverse;
+
+  }
+  .sidebar{
+    display: none;
+  }
+  #heart{
+    display: none;
+  }
+   .cards-container div{
+    max-width: 55rem;
+  }
+  .headings h1{
+
+  font-size:3rem;
+}
+}
+
+
+#reviewheading{
+    font-size: 2rem;
+}
+
+.Reviews{
+    width: 100%;
+    display: flex;
+    align-items: normal;
+    justify-content: space-evenly;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.3rem;
+}
+
+.review-card {
+    background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod  );
+    border:0.1px solid darkred;
+
+      border-radius: 12px;
+      width: 25rem;
+      max-height: 12rem;
+      text-align: center;
+      padding: 0.2rem;
+      box-shadow: 2px 2px 2px  black;
+      transition: transform 0.2s linear;
+}
+.review-card:hover{
+    transform: translateY(12px);
+
+    z-index: 999;
+}
+
+.review-card div{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.review-card img{
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    border: 2px solid lightgray;
+
+}
+.review-card section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.review-card p{
+ font-weight: 500;
+}
+
+.howitworks{
+
+    text-align: center;
+    font-weight: 500;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0.2rem;
+}
+.howitworks h2{
+    font-size: 2.2rem;
+}
+.howitworks p{
+    width: 70%;
+    font-size: large;
+}
+.vision{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.2rem;
+}
+.vision div{
+    background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod  );
+    border:0.1px solid darkred;
+
+    height: 8rem;
+    width: 19rem;
+    border-radius: 12px;
+    text-align: center;
+    padding: 0.1rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: 2px 2px 2px  black;
+}
+.vision h5{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-size: medium;
+   
+}
+.vision p{
+    font-size: smaller;
+}

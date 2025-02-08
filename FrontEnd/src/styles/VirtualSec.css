@@ -1,0 +1,82 @@
+/* VirtualDating Section Styles */
+.virtual-dating {
+    position: relative;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff; /* Text color for contrast */
+    background-color: grey;
+    overflow: hidden;
+  }
+  
+  .virtual-dating-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+     background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .virtual-dating-content {
+    text-align: center;
+    max-width: 600px; /* Limit width for content */
+    padding: 20px;
+    border-radius: 10px; /* Rounded edges */
+    margin-bottom: 60px;
+  }
+  
+  .virtual-dating-content h2 {
+    font-size: 3rem; /* Large heading */
+    margin-bottom: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .virtual-dating-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    line-height: 1.8;
+  }
+  
+  .virtual-dating-button {
+    background: linear-gradient(135deg, #ff7eb3, #ff758c); /* Gradient button */
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+  }
+  
+  .virtual-dating-button:hover {
+    transform: translateY(-5px); /* Lift on hover */
+    box-shadow: 0 10px 20px rgba(255, 117, 140, 0.6);
+  }
+  
+  .virtual-dating-button:active {
+    transform: translateY(0); /* Reset on click */
+    box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .virtual-dating-content h2 {
+      font-size: 2.5rem; /* Adjust heading for smaller screens */
+    }
+  
+    .virtual-dating-content p {
+      font-size: 1rem;
+    }
+  
+    .virtual-dating-button {
+      font-size: 1rem; /* Adjust button size */
+      padding: 12px 25px;
+    }
+  }
+  

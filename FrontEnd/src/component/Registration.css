@@ -1,0 +1,59 @@
+/*:root {
+  --lime-green: #32CD32;
+  --black: #040404;
+  --lavender: #E6E6FA;
+  --gold: #3e3e3c;
+  --white: #efefeb;
+}
+
+body {
+  background: url('../../public/images/background1.png') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--black);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 700px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+}
+
+input {
+  border: 2px solid var(--lime-green);
+  border-radius: 5px;
+  padding: 5px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: var(--lavender);
+  color: var(--black);
+}
+
+button {
+  background-color: var(--lime-green);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: var(--gold);
+  color: var(--black);
+}
+
+p a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+*/

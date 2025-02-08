@@ -1,0 +1,231 @@
+
+.main{
+	position: relative;
+    width: 100vw; /* Full width on every device */
+    height: fit-content; /* Full height on every device */
+    text-align: center;
+    /*font-family: sans-serif;*/
+    font-weight: 700;
+    font-size: 1.3rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* background: linear-gradient(150deg, deeppink, lightpink, rebeccapurple); */
+}
+.custom{
+	margin: auto;
+	background: linear-gradient(20deg,goldenrod,indianred );
+	opacity: 0.9;
+	width: 80%;
+	border-radius: 25px;
+}
+.locations{
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	padding: 0.3rem 0.4rem;
+	flex-wrap: wrap;
+	height: 9rem;
+
+}
+.locations select{
+	border-radius: 15px;
+	padding: 0.1rem;
+		font-family: sans-serif;
+	font-weight: 700;
+	font-size: large;max-width: 10rem;
+}
+.AgeAndGoals{
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	/*background-color: yellowgreen;*/
+	padding: 0.3rem 0.4rem;
+  flex-wrap: wrap;
+	height: 5rem;
+	margin-top: 2rem;
+
+}
+.AgeAndGoals select{
+	border-radius: 15px;
+	padding: 0.1rem;
+		font-family: sans-serif;
+	font-weight: 700;
+	font-size: large;
+}
+.hobbies {
+   	margin: auto;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 3px;
+   border-radius: 15px;
+      border: 0.1px solid gray;
+   width: 90%;  overflow: scroll;
+ scrollbar-width: none;
+
+}
+.interests{
+	margin: auto;
+   width: 90%;
+   border: 0.1px solid gray;
+     margin-bottom: 2rem;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3px;
+  border-radius: 15px;
+  overflow: scroll;
+ scrollbar-width: none;
+ /*box-shadow: 1px 1px 1px black;*/
+
+}
+
+.interests::-webkit-scrollbar{
+	display: none;
+}
+.hobbies::-webkit-scrollbar{
+	display: none;
+}
+@media (max-width: 900px){
+	.hobbies{
+		width: 90%;
+		height: 6rem;
+	}
+	.interests{
+		width: 90%;
+		height: 6rem;
+	}
+}
+.hobbyInterest{
+	margin-top:5rem ;
+
+}
+.hobbyInterest div{
+	margin-top:1rem ;
+
+}
+.hobbies ul{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 15px;
+    margin: auto;
+    padding: 0.1rem 1rem; /* Add padding for capsule appearance */
+    background-color: #f0f0f0; /* Optional: Add background color */
+    list-style: none;
+    cursor: pointer;
+    
+}
+
+.interests ul{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 15px;
+    margin: auto;
+    padding: 0.1rem 1rem; /* Add padding for capsule appearance */
+    background-color: #f0f0f0; /* Optional: Add background color */
+    list-style: none;
+    cursor: pointer;
+}
+.btn{
+	background: linear-gradient(130deg ,deeppink,pink,greenyellow);
+	box-shadow: 2px 2px 2px black;
+	width: 5rem;
+	margin-top:2rem ;
+	margin-bottom:2rem ;
+
+}
+.added {
+	border: 2px solid darkgreen;
+}
+
+.removed {
+		border: 2px solid red;
+
+}
+
+/*styling for the search-results page*/
+.results{
+	height: 100vh;
+	min-height: fit-content;
+	width: 100vw;
+  padding: 0.3rem;
+  display: flex;
+  align-items: normal;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+}
+
+.profile{
+	/*border: 2px solid black;*/
+	/*box-shadow: 3px 3px 3px black;*/
+	border: 1px solid deeppink;
+	width: 12rem;
+	height: 20rem;
+	background-position: center;
+	background-repeat: no-repeat;
+	position: relative;
+	border-radius: 12px;
+	padding: 0.4rem;
+	cursor: pointer;
+}
+
+#nameAndImage{
+  position: absolute;
+  color: white;
+  bottom: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  font-size: small;
+  font-weight: bold;
+
+}
+
+.location{
+	position: absolute;
+	bottom: 3rem;
+	color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: small;
+  font-weight: bold;
+}
+#score{
+	position: absolute;
+	bottom: 7rem;
+	font-size: small;
+  font-weight: bold;
+  color: white;
+}
+
+.action{
+	position: absolute;
+	bottom: 2px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.action button{
+ 	border-radius: 15px;
+   width: 5rem;
+   background: linear-gradient(45deg ,pink,deeppink);
+   font-weight: bold;
+   border: 1px solid lightgray;
+} 
+
