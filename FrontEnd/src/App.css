@@ -18,6 +18,7 @@ wheat);*/
     background-repeat: no-repeat;
     background-position: center;
     min-height: 100vh;
+    max-height: fit-content;
     max-width: 100vw;
     margin: 0;
     padding: 0;

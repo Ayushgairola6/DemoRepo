@@ -1,7 +1,18 @@
-import React from 'react';
+import {React,useEffect} from 'react';
 import '../styles/VirtualSec.css';
+import {UseStore} from '../store/store';
+import {useNavigate} from 'react-router-dom';
 
 const VirtualDating = () => {
+  const navigate = useNavigate();
+  const {isLoggedIn} = UseStore();
+
+ useEffect(()=>{
+     if(isLoggedIn===false){
+      navigate("/error")
+     }
+   },[isLoggedIn])
+
   return (
     <section className="virtual-dating">
       <div className="virtual-dating-overlay">

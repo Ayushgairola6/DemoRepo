@@ -1,6 +1,7 @@
 //AUTO MATED MATCHMAKING  
 const {client} = require("../db.js");
  //  gather users in a single cluster to avoid slow response
+const jwt_Secret = process.env.JWT_SECRET;
 
 
  const createcluster = async ()=>{
@@ -13,7 +14,7 @@ const {client} = require("../db.js");
      console.log("no token found")
     return res.status(400).json("No token found")
     }
-     const decoded = jwt.verify(token,12345);
+     const decoded = jwt.verify(token,jwt_Secret);
 
      const user = decoded.id
 

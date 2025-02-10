@@ -10,7 +10,7 @@ const Sidebar=({setVisible,visible,isLoggedIn})=>{
                  <Link id="link" to="/searchpage">Search-Filters</Link>
                  <Link id="link" to="/ProfileList">Recommendations</Link>
                  <Link id="link" to="/How-it-works">HowItWorks</Link>
-                 <Link id="link" to="/VirtualDating">VirtualDating</Link>
+                 <Link id="link" to="/Coaching">VirtualDating</Link>
                  <Link id="link" to="/Contact">Contact</Link>
                  <Link id="link" to="/Blogs">Blog</Link>
                  {isLoggedIn===false?<Link id="link" to='/Register'>Register</Link>:<Link id="link" to="/Account">Account</Link>}

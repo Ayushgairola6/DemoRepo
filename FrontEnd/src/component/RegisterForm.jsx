@@ -1,11 +1,21 @@
-import  { useState ,useRef} from "react";
+import  { useState ,useRef,useEffect} from "react";
 import { encryptPassword } from "../encryption";
 import ProfileForm from "./ProfileForm";
 import PhotoUpload from "./PhotoUpload";
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import './Registration.css'
 const RegisterForm = () => {
+  const [registered,setIsRegistered] = useState(false);
+
+  const navigate = useNavigate()
+ useEffect(()=>{
+  if(registered===true){
+    navigate('/Login')
+  }
+ },[navigate,registered])
+
+
   // reference of all the inputs
   const NameRef= useRef()
   const EmailRef= useRef()
@@ -55,6 +65,7 @@ const RegisterForm = () => {
       },
     });
     console.log(response.data);
+    setIsRegistered(true);
   } catch (error) {
     console.error("Error while signing up:", error);
   }

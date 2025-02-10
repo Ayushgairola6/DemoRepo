@@ -1,10 +1,27 @@
-import { useRef } from "react";
-import axios from 'axios'
+import { useRef ,useEffect} from "react";
+import axios from 'axios';
+import {UseStore} from '../store/store';
+import {useNavigate} from 'react-router-dom';
 
 // import './style.css';
 
 
 export default function LoginForm() {
+
+  
+
+  const {isLoggedIn,setIsloggedIn} = UseStore()
+   const navigate = useNavigate();
+
+  useEffect(()=>{
+     if(isLoggedIn===true){
+       navigate("/ProfileList")
+       console.log(isLoggedIn,'login state')
+     }
+    
+
+  },[isLoggedIn,navigate])
+
  const EmailRef=useRef();
  const PasswordRef=useRef();
 
@@ -24,7 +41,9 @@ try {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
+    // set isLogggedIn to true and store the token in the localStorage
+    setIsloggedIn(true);
+    localStorage.setItem("AuthenticationToken",response.data.token);
   } catch (error) {
     console.error("Error while logging in:", error);
   }
@@ -32,7 +51,7 @@ try {
  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center  p-6">
+    <div onClick={()=>console.log(isLoggedIn)} className="min-h-screen flex items-center justify-center  p-6">
   <div className="bg-gradient-to-br  from-[lightgoldenrodyellow] to-[palegoldenrod] shadow-lg rounded-xl p-8 w-full max-w-md">
     <h1 className="text-2xl font-semibold text-center text-gray-800">
       Welcome Back! Ready to continue where you left off?

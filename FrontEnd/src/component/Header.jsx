@@ -13,7 +13,7 @@ function Header({isLoggedIn,setVisible,visible}) {
     // array of objects with each obj containing the name and route of the page
 const pages = [{name:"Home",route:"/",icon:<FaHome/>},{name:"Search-Filters",route:"/searchpage",icon:<FaSearch/>},
 {name:"Recommendations",route:"/ProfileList",icon:<FaFire/>},
-{name:"HowItWorks",route:"/How-it-works",icon:<FaQuestion/>},{name:"VirtualDating",route:"/VirtualDating",icon:<FaMobile/>},
+{name:"HowItWorks",route:"/How-it-works",icon:<FaQuestion/>},{name:"Coaching",route:"/Coaching",icon:<FaMobile/>},
 {name:"Register",route:"/Register",icon:<FaUser/>}];
 
 // the useNavigate hook
@@ -65,11 +65,15 @@ const pages = [{name:"Home",route:"/",icon:<FaHome/>},{name:"Search-Filters",rou
                  <Link  id="link" to="/How-it-works">HowItWorks</Link>
                  <Link  id="link" to="/VirtualDating">VirtualDating</Link>*/}
                
-                 <select  onChange={(e)=>ChangePage(e)}>
+                 <select className="w-20"  onChange={(e)=>ChangePage(e)}>
                  <option className="font-bold " value="/">More</option>
                  <option className="font-bold "  value="/Blogs">Blogs</option>
                  <option className="font-bold "  value="/Contact">Contact</option>
                  <option className="font-bold "  value="/About">About us</option>
+                 <option className="font-bold "  value="/Plans">Pricing</option>
+                 <option className="font-bold "  value="/VirtualDates">VirtualDates</option>
+                 <option className="font-bold "  value="/SecurityAndPrivacy">SecurityAndPrivacy</option>
+
 
 
                  </select>

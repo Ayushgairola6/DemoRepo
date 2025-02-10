@@ -1,12 +1,63 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const jwt_Secret = 12345;
+const dotenv = require("dotenv")
+dotenv.config();
+const jwt_Secret = process.env.JWT_SECRET;
 const client = require("../db.js")
 
 		// function that'll send users profiles based on his preference or 
 		// randomly until he sets some filters
 
 	 
+// Send All Profiles to the user as recommendations
+
+const SendProfiles = async (req,res)=>{
+    try{
+         const token = req.headers.authorization.split(' ')[1];
+         if(!token){
+            return res.status(400).json({message:"No token found"})
+         }
+
+          let userId ;
+         const verified = jwt.verify(token,jwt_Secret ,(err,data)=>{
+            if(err){
+            throw err;
+             }
+            userId = data.id;
+         })
+
+
+         if(!userId){
+            return res.status(400).json("error no user id found");
+         }
+        //Fetch 30 users at a time and set a random offset to make the profiles random
+        const SearchQuery = `SELECT * 
+FROM users 
+WHERE id <> $1  -- Exclude the current user
+ORDER BY RANDOM() 
+LIMIT 20;
+
+
+        `
+
+        // const SearchQuery = `SELECT * FROM users LIMIT 20`
+        const data = await client.query(SearchQuery,[userId]);
+        
+        if(data.rows.length ===0){
+            return res.status(400).json({message:"No matches found"})
+        }
+
+       return res.status(200).json(data.rows);
+
+
+    }catch(error){
+        throw error;
+    }
+}
+
+
+
+// find profles based on the search filters
 
     const Get_Profiles = async (req, res) => {
     try {
@@ -21,8 +72,7 @@ const client = require("../db.js")
         if (!UserToken) {
             return res.status(400).json({ message: "No token provided" });
         }
-      // console.log(req.body);
-        const jwtSecret = process.env.JWT_SECRET || "12345"; // Use env variable for the secret key
+    
 
         // Verify JWT Token
         let User_Id ;
@@ -76,7 +126,7 @@ const SearchQuery = `SELECT * FROM preferences WHERE user_id = $1`
 let offset = 0;
    const GetUsers = `SELECT 
     u.id AS user_id,
-    u.username,
+    u.name,
     u.email,
     u.images,
     p.country,
@@ -171,10 +221,74 @@ function CalculateCompatibilityScore(users,input){
   } 
  
 
+// function to capture likes 
+
+
+const HandleLikes = async (req, res) => {
+    try {
+        const user2Id = req.params.id; // Fixed `req.param.id`
+        if (!user2Id) {
+            return res.status(400).json({ error: "No user found" });
+        }
+
+        const token = req.headers.authorization?.split(" ")[1]; // Optional chaining to prevent errors
+        if (!token) {
+            return res.status(400).json({ error: "No token provided" });
+        }
+
+        // Verify token and extract user ID
+        let userId;
+        try {
+            const decoded = jwt.verify(token, jwt_Secret);
+            userId = decoded.id;
+        } catch (err) {
+            return res.status(401).json({ error: "Invalid token" });
+        }
+
+        if (!userId) {
+            return res.status(400).json({ error: "No user ID found" });
+        }
+
+        // Insert the like into the `likes` table
+        const insertQuery = `
+            INSERT INTO likes (user_id, liked_user_id) 
+            VALUES ($1, $2) 
+            ON CONFLICT DO NOTHING;
+        `;
+        await client.query(insertQuery, [userId, user2Id]);
+
+        // Check if a match exists
+        const checkMatchQuery = `
+            SELECT * FROM likes 
+            WHERE (user_id = $1 AND liked_user_id = $2) 
+            OR (user_id = $2 AND liked_user_id = $1);
+        `;
+        const check = await client.query(checkMatchQuery, [userId, user2Id]);
+
+        if (check.rowCount === 2) { // Both users have liked each other
+            const insertMatchQuery = `
+                INSERT INTO matches (user1_id, user2_id) 
+                VALUES ($1, $2) 
+                ON CONFLICT DO NOTHING;
+            `;
+            await client.query(insertMatchQuery, [userId, user2Id]);
+
+            return res.status(200).json({ message: "It's a match!" });
+        }
+
+        return res.status(200).json({ message: "Liked successfully" });
+
+    } catch (err) {
+        console.error("Error handling like:", err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 
 
-exports.data = { Get_Profiles };
+
+
+exports.data = { Get_Profiles ,SendProfiles,HandleLikes};
 
 
   
