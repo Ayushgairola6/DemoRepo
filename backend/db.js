@@ -3,11 +3,11 @@ require("dotenv").config();
 
 // create a new local client
 const client = new Client({
-	user:process.env.USER,
-	host:process.env.HOST,
-	database:process.env.DTB,
-	password:process.env.PASS,
-	port:process.env.PORT,
+	user:"avnadmin",
+	host:"pg-337cfd91-ayushgairola2002-403c.f.aivencloud.com",
+	database:"defaultdb",
+	password:"AVNS_muwj0TXfFq0xeeXWBSB",
+	port:14598,
 	ssl: {
     rejectUnauthorized: false
   }
