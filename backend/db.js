@@ -3,11 +3,11 @@ require("dotenv").config();
 
 // create a new local client
 const client = new Client({
-	user:process.env.dbuser,
-	host:process.env.dbhost,
-	database:process.env.dbdatabase,
-	password:process.env.dbpassword,
-	port:process.env.dbport,
+	user:process.env.USER,
+	host:process.env.HOST,
+	database:process.env.DTB,
+	password:process.env.PASS,
+	port:process.env.PORT,
 	ssl: {
     rejectUnauthorized: false
   }
