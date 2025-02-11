@@ -14,8 +14,8 @@ const preference = require("./Model/PreferenceTable")
 
 // intialization of tables
 
-LikeTable.table.CreateLikeTable();
-matchTable.table.creatematchTable();
+// LikeTable.table.CreateLikeTable();
+// matchTable.table.creatematchTable();
 // preference.table.CreatePreferenceTable();
 // cors to establish a connection between front end and backend
 app.use(cors());

@@ -83,9 +83,9 @@ const InterestArray = interests.split(' ')
     }
       let ImageUrlArray = [];
     if(image){
-      Image = await uploadToFirebase(image);
-      console.log(Image)
-      ImageUrlArray[Image];
+      // Image = await uploadToFirebase(image);
+      // console.log(Image)
+      // ImageUrlArray[Image];
     }
      ImageUrlArray= ['{thereisnoimageforthisuser}'];
     // Hash the user's password before storing it
@@ -136,7 +136,6 @@ const Login = async (req, res) => {
 
 // verifying the password 
     const user = result.rows[0];
-    console.log(user);
     // const isPasswordValid = await bcrypt.compare(password, user.hash_password);
     // if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
 

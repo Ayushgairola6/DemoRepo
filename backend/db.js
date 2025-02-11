@@ -1,13 +1,16 @@
 const {Client } = require("pg");
-
+require("dotenv").config();
 
 // create a new local client
 const client = new Client({
-	user:"postgres",
-	host:"localhost",
-	database:"Test",
-	password:"Ayush@2002",
-	port:5432
+	user:process.env.dbuser,
+	host:process.env.dbhost,
+	database:process.env.dbdatabase,
+	password:process.env.dbpassword,
+	port:process.env.dbport,
+	ssl: {
+    rejectUnauthorized: false
+  }
 })
 
 
