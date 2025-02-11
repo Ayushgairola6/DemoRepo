@@ -38,6 +38,6 @@ app.use(PaymentRouter);
 
 
 // listen the server at port 8080
-app.listen(process.env.SERVER_PORT,'0.0.0.0',()=>{
+app.listen(process.env.PORT,'0.0.0.0',()=>{
 	console.log("server connected")
 })
