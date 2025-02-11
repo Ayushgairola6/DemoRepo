@@ -6,7 +6,7 @@ const openpgp = require('openpgp');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const client = require("../db.js")
-const { uploadToFirebase, deleteImage } = require('./FirebaseConfig/FirebaseAdmin.js')
+// const { uploadToFirebase, deleteImage } = require('./FirebaseConfig/FirebaseAdmin.js')
 
 // multer for handling image parsing
 const multer = require("multer");
