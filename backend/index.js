@@ -12,11 +12,11 @@ const preference = require("./Model/PreferenceTable");
 const {createMediaTable} = require("./Model/MediaTable");
 const {createUsersTable} = require("./Model/UsersTable");
 // intialization of tables
-createUsersTable()
-LikeTable.table.CreateLikeTable();
-matchTable.table.creatematchTable();
- preference.table.CreatePreferenceTable();
-createMediaTable()
+// createUsersTable()
+// LikeTable.table.CreateLikeTable();
+// matchTable.table.creatematchTable();
+//  preference.table.CreatePreferenceTable();
+// createMediaTable()
 
 // cors to establish a connection between front end and backend
 app.use(cors());
