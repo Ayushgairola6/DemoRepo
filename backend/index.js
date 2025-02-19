@@ -1,5 +1,6 @@
 const express= require("express");
 const app = express();
+const dotenv = require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require("body-parser")
 const feed_Router = require("./Routers/FeedRouter");
@@ -39,6 +40,6 @@ app.use(PaymentRouter);
 
 
 // listen the server at port 8080
-app.listen(8080,'localhost',()=>{
+app.listen(process.env.PORT,'0.0.0.0',()=>{
 	console.log("server connected")
 })
