@@ -46,6 +46,6 @@ app.use(chatRouter.route.ChatRouter)
 
 
 // listen the server at port 8080
-app.listen(process.env.PORT,'localhost',()=>{
+app.listen(process.env.PORT,'0.0.0.0',()=>{
 	console.log("server connected")
 })
