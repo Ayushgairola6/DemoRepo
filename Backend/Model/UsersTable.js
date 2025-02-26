@@ -12,8 +12,8 @@ const createUsersTable = async(req,res)=>{
       location VARCHAR(800),
       images TEXT[]
 )`
-    
+    await client.query(query)
 	console.log("UsersTable has been created")
 }
 
-module.exports = {createUsersTable};
+exports.data = {createUsersTable};

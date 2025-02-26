@@ -9,19 +9,19 @@ const chatRouter = require("./Routers/ChatRouter");
 const {quizRouter} = require("./Routers/QuizRouter")
 // importing tables
 require("dotenv").config();
+const userTable = require("./Model/UsersTable");
+
 const LikeTable = require('./Model/Likestable');
 const matchTable = require('./Model/Matchestable');
 const preference = require("./Model/PreferenceTable");
 const {createMediaTable} = require("./Model/MediaTable");
-const {createUsersTable} = require("./Model/UsersTable");
+
+userTable.data.createUsersTable()
+ preference.table.CreatePreferenceTable();
+ LikeTable.table.CreateLikeTable();
+matchTable.table.creatematchTable();
 require('./Model/MatchQuizTables')
 require("./Model/chatsTable")
-// require("./Query.js")
-// intialization of tables
-createUsersTable()
-LikeTable.table.CreateLikeTable();
-matchTable.table.creatematchTable();
- preference.table.CreatePreferenceTable();
 
 // cors to establish a connection between front end and backend
 app.use(cors());
