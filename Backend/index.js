@@ -8,6 +8,7 @@ const {PaymentRouter} = require('./Routers/PaymentRouter')
 const chatRouter = require("./Routers/ChatRouter");
 const {quizRouter} = require("./Routers/QuizRouter")
 // importing tables
+require("dotenv").config();
 const LikeTable = require('./Model/Likestable');
 const matchTable = require('./Model/Matchestable');
 const preference = require("./Model/PreferenceTable");
@@ -45,6 +46,6 @@ app.use(chatRouter.route.ChatRouter)
 
 
 // listen the server at port 8080
-app.listen(8080,'localhost',()=>{
+app.listen(process.env.PORT,'localhost',()=>{
 	console.log("server connected")
 })
