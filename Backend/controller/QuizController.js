@@ -98,13 +98,57 @@ if (questionIds.length === 0 || answerIds.length===0) {
     if (result.rowCount === 0) {
       return res.status(400).json({ message: "Error updating responses" });
     }
+   const users = await SendUsers(validResponses,UserId)
 
-    return res.status(200).json({ message: "Responses submitted successfully and previous responses has been updated" });
+   if(!users){
+    return res.status(200).json({message:"Your thoughts are unique you just need to wait to find the right person"})
+   }
+   console.log(users)
+    return res.status(200).json(users);
 
      }catch(err){
      	throw err;
      }
 	}
+
+
+// function to get users whose answer matches users answerIds
+
+
+const SendUsers = async (validResponses,UserId)=>{
+  try{
+    const questionAnswerPairs = validResponses.map(r => `(${r.question_id}, ${r.option_id})`).join(", ");
+    const totalQuestions = validResponses.length; 
+
+     if(!questionAnswerPairs){
+      return res.status(400).json({message:"Error while getting matches please try again later"})
+     }
+
+     const secondquery = `
+       WITH matched_users AS (
+        SELECT user_id
+        FROM quiz_response
+        WHERE (question_id, answer_id) IN (${questionAnswerPairs})
+        GROUP BY user_id
+        HAVING COUNT(*) = $1
+    )
+    SELECT u.id, u.name, u.email, u.age, u.gender, u.about, u.location, u.images,
+           p.country, p.state, p.city, p.relationship_goal, p.hobbies, p.interests
+    FROM users u
+    JOIN preferences p ON u.id = p.user_id
+    WHERE u.id IN (SELECT user_id FROM matched_users)
+    AND u.id != $2;
+    `;
+
+    const accounts = await client.query(secondquery, [totalQuestions,UserId]);
+    console.log(accounts.rows)
+    return accounts.rows;
+
+   const query = `SELECT u.username,u.images from users u LEFT JOIN quiz_response q ON q `
+  }catch(error){
+    throw error
+  }
+}
 
 
 exports.data={GetQuizResult,GetQuizQuestions};
