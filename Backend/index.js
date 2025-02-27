@@ -28,12 +28,12 @@ const preference = require("./Model/PreferenceTable");
 
 // require("./Query.js")
 // intialization of tables
-userTable.data.createUsersTable()
- preference.table.CreatePreferenceTable();
- LikeTable.table.CreateLikeTable();
-matchTable.table.creatematchTable();
-require('./Model/MatchQuizTables')
-require("./Model/chatsTable")
+// userTable.data.createUsersTable()
+//  preference.table.CreatePreferenceTable();
+//  LikeTable.table.CreateLikeTable();
+// matchTable.table.creatematchTable();
+// require('./Model/MatchQuizTables')
+// require("./Model/chatsTable")
 // cors to establish a connection between front end and backend
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
