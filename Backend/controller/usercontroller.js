@@ -147,9 +147,8 @@ const Login = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
  
     if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
-
    // Create a JWT token for the newly logged in user
-    const token = jwt.sign({ id: result.rows[0].id, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
+    const token = jwt.sign({ id: result.rows[0].id,name:result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
     res.status(200).json({ message: 'Login successful!', token });
   } catch (err) {
@@ -218,77 +217,78 @@ const UploadMedia = async (req,res)=>{
 }
 
 // update profile related data;
-const UpdateProfile =async(req,res)=>{
-  try{
+const UpdateProfile = async (req, res) => {
+  try {
+    const { about, age, location, interests, hobbies, relationShip, gender } = req.body;
 
-    const {about,age,location,interests,hobbies,relationShip,gender} = req.body;
-   console.log(req.body)
-    if (!about || !age || !location || !interests || !hobbies || !relationShip |!gender) {
-            console.log("all fields are mandatory")
-    return res.status(400).json({ message: "all fields are mandatory" });
-}
+    // Validate required fields
+    if (!about || !age || !location || !interests || !hobbies || !relationShip || !gender) {
+      console.log("All fields are mandatory");
+      return res.status(400).json({ message: "All fields are mandatory" });
+    }
 
+    // Extract token from headers
+    const UserToken = req.headers.authorization?.split(" ")[1];
+    if (!UserToken) {
+      console.log("No token provided");
+      return res.status(400).json({ message: "No token provided" });
+    }
 
-     const UserToken = req.headers.authorization.split(" ")[1];
-        if (!UserToken) {
-            console.log("No token")
-            return res.status(400).json({ message: "No token provided" });
-        }
-    
+    // Verify JWT token
+    let User_Id;
+    try {
+      const decoded = jwt.verify(UserToken, process.env.JWT_SECRET);
+      User_Id = decoded.id;
+    } catch (error) {
+      console.log("Token expired or invalid");
+      return res.status(400).json({ message: "Token expired or invalid" });
+    }
 
-        // Verify JWT Token
-        let User_Id ;
+    if (!User_Id) {
+      console.log("Error in UserId");
+      return res.status(400).json({ message: "User ID not found" });
+    }
 
-        const decoded = jwt.verify(UserToken, process.env.JWT_SECRET ,(error,result)=>{
-            if(error){
-                return res.status(400).json("token expired || token error")
-            }
-         User_Id = result.id;
+    // Update users table
+    const UpdateUserQuery = `
+      UPDATE users
+      SET 
+        about = COALESCE($1, about),
+        age = COALESCE($2, age),
+        gender = COALESCE($3, gender),
+        location = COALESCE($4, location)
+      WHERE id = $5;
+    `;
+    const userUpdateResult = await client.query(UpdateUserQuery, [about, age, gender, location, User_Id]);
 
-        });
+    if (userUpdateResult.rowCount === 0) {
+      console.log("Error updating users table");
+      return res.status(400).json({ message: "Error updating user profile" });
+    }
+    const safeInterests = `{${interests.map((i) => `"${i}"`).join(",")}}`;
+    const safeHobbies = `{${hobbies.map((h) => `"${h}"`).join(",")}}`;
+    // Update preferences table (use INSERT ... ON CONFLICT to handle missing rows)
+    const UpdatePreferencesQuery = `
+      INSERT INTO preferences (user_id, interests, hobbies, relationship_goal)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (user_id) 
+      DO UPDATE SET 
+        interests = EXCLUDED.interests,
+        hobbies = EXCLUDED.hobbies,
+        relationship_goal = EXCLUDED.relationship_goal;
+    `;
+    const preferencesUpdateResult = await client.query(UpdatePreferencesQuery, [User_Id, safeInterests, safeHobbies, relationShip]);
 
-        if(!User_Id){
-          console.log("error in UserId")
-          return res.status(400).json({message:"Not found"})
-        }
+    if (preferencesUpdateResult.rowCount === 0) {
+      console.log("Error updating preferences table");
+      return res.status(400).json({ message: "Error updating preferences" });
+    }
 
-        const Update = `UPDATE users
-SET 
-    about = COALESCE($1, about),
-    age = COALESCE($2,age),
-    gender = COALESCE($3,gender),
-    location = COALESCE($4,location)
-   WHERE id = $5;
-`
-const data = await client.query(Update,[about,age,gender,location,User_Id]);
-
-
-if(data.rowsCount===0){
-  console.log("error in data1")
-  return res.status(400).json({message:"error"})
-}
-
-const Update2 = ` UPDATE preferences 
-SET interests = COALESCE($1,interests),
-    hobbies = COALESCE ($2,hobbies),
-    relationship_goal = COALESCE($3,relationship_goal)
-    WHERE user_id = $4 ;
-`
-const data2 = await client.query(Update2,[interests,hobbies,relationShip,User_Id])
-
-if(data2.rowsCount===0){
-  console.log("error in data 2")
-  return res.status(400).json({message:"Error try again"});
-}
-
-return res.status(200).json({message:"Updated successfully"});
-
-          
-  }catch(err){
-    throw err;
+    return res.status(200).json({ message: "Profile updated successfully" });
+  } catch (err) {
+    console.error("Error in UpdateProfile:", err);
   }
-        }
-  
+};  
 //  send  user specific data only using userId
 
 const SendUserData = async(req,res)=>{
@@ -322,11 +322,10 @@ LEFT JOIN preferences ON preferences.user_id = users.id
 WHERE users.id = $1;;
 `;
       const User = await client.query(FindQuery,[user_id]);
-      let backup;
       if(User.rows.length===0){
-         backup = await client.query("SELECT name,age,about,location,gender,images FROM users WHERE id = $1",[user_id])
-
-        return res.status(200).json(backup.rows);
+        
+          
+        return res.status(400).json({message:"user not found"});
       }
 
       return res.status(200).json(User.rows);

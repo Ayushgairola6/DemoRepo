@@ -20,6 +20,7 @@ const createOptionsTable = async()=>{
     id SERIAL PRIMARY KEY,
     category VARCHAR(800) NOT NULL,
     option TEXT NOT NULL,
+    option_serial VARCHAR(10)
     question_id INT REFERENCES quizquestions(id) ON DELETE CASCADE
   
 	)`
@@ -39,6 +40,8 @@ const createQuizResponseTable =async()=>{
 
 	await client.query(query);
 	console.log("quiz_response table has been created");
+
+	const date = await client.query(`SELECT * FROM quiz_response`)
 }
 createQuizQuestionTable()
 createOptionsTable()

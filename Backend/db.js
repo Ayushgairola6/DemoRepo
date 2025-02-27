@@ -2,7 +2,7 @@ const {Client } = require("pg");
 require("dotenv").config();
 
 
-// create a new local client
+// create a new  client remote 
 // const client = new Client({
 // 	user:process.env.PG_USER,
 // 	host:process.env.PG_HOST,
@@ -13,6 +13,8 @@ require("dotenv").config();
 //     rejectUnauthorized: false
 //   }
 // })
+
+// local client instance
 // const client = new Client({
 // 	user:"postgres",
 // 	host:"localhost",

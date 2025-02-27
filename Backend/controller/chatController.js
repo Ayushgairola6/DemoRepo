@@ -1,40 +1,53 @@
 const client = require("../db.js");
 const jwt = require("jsonwebtoken");
-const {Server} = require("socket.io");
+const {io} = require('../index.js')
 require("dotenv").config();
 
-// const io = new Server(server, {
-//   cors: { origin: "*" }, 
-// }); 
 
-// // verification of usertoken
-// io.use((socket, next) => {
-//   const token = socket.handshake.auth?.token; 
-//   if (!token) {
-//     return next(new Error("Authentication error: Token missing"));
-//   }
+// verification of usertoken send with socket headers
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token; 
+  if (!token) {
+    return next(new Error("Authentication error: Token missing"));
+  }
 
-//   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-//     if (err) {
-//       return next(new Error("Authentication error: Invalid token"));
-//     }
-//     socket.user = decoded; 
-//     next();
-//   });
-// });
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+     console.log("error while verification")
+      return next(new Error("Authentication error: Invalid token"));
+    }
+    socket.user = decoded; 
+    next();
+  });
+});
 
-// // Handling socket connections after authentication
-// io.on("connection", (socket) => {
-//   console.log("User connected:", socket.user.id);
+// client sends a connection event and we recieve it
+io.on("connection", (socket) => {
+  const user1 = socket.user.id;
+  const user1name = socket.user.name;
+  let roomName ;
 
-//   socket.on("message", (data) => {
-//     console.log(`Message from ${socket.user.id}:`, data);
-//   });
+  socket.on("joinChat", (user2) => {
+     const user2name = user2.selectedUser.name;
+    roomName = `${user1name}_and_${user2name}'s personal space`; 
 
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected:", socket.user.id);
-//   });
-// });
+    if (!user2) {
+      console.log("User2 not found");
+      return socket.disconnect();
+    }
+
+    socket.join(roomName);
+    io.to(roomName).emit("roomJoined", {roomName,user1,user2:user2.selectedUser.id});
+  });
+  socket.on("message", (data) => {
+    if (!socket.roomName) {
+      console.log("User not in a room");
+      return;
+    }
+    io.to(socket.roomName).emit("newMessage", { sender: user1name, text: data });
+  });
+});
+
 
 
 
@@ -56,7 +69,7 @@ const SendMatches =async(req,res)=>{
 
       // search for user in matches table and send the matched users profile data;
 
-      const Search = `SELECT u.*
+      const Search = `SELECT u.name,u.id,u.images,u.gender
 FROM matches m
 JOIN users u 
 ON (u.id = m.user1_id OR u.id = m.user2_id) 
