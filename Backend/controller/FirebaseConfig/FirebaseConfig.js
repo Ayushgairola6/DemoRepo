@@ -1,7 +1,7 @@
 
 // Import the functions you need from the SDKs you need
 const { initializeApp } = require("firebase/app");
-const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+const { getStorage, ref, uploadBytesResumable, getDownloadURL ,deleteObject } = require("firebase/storage");
  require('dotenv').config()
 
 const firebaseConfig = {
@@ -26,7 +26,7 @@ const uploadFile = async (file, path) => {
             throw new Error("Invalid file object received. Ensure you're using Multer.");
         }
 
-        const filename = file.originalname ? file.originalname : `file_${Date.now()}`; // ✅ Handle missing originalname
+        const filename = file.originalname ? file.originalname : `file_${Date.now()}`; 
         const storageRef = ref(storage, `${path}/${Date.now()}_${filename}`);
 
         const uploadTask = uploadBytesResumable(storageRef, file.buffer);
@@ -36,7 +36,6 @@ const uploadFile = async (file, path) => {
                 "state_changed",
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`Upload is ${progress.toFixed(2)}% done`); // ✅ Ensure correct percentage
                 },
                 (error) => reject(error),
                 () => resolve()
@@ -50,4 +49,32 @@ const uploadFile = async (file, path) => {
         throw error;
     }
 };
-module.exports ={app,uploadFile}
+
+// delete file
+
+const deleteFile = async (fileUrl) => {
+    try {
+        if (!fileUrl) throw new Error("No file URL provided.");
+
+        // Extract the file path from the Firebase Storage URL
+        const decodedUrl = decodeURIComponent(fileUrl);
+        const baseUrl = `https://firebasestorage.googleapis.com/v0/b/${process.env.storageBucket}/o/`; 
+        if (!decodedUrl.startsWith(baseUrl)) throw new Error("Invalid Firebase URL.");
+
+        const path = decodedUrl.replace(baseUrl, "").split("?")[0]; // Get path from URL
+
+        // Create a reference to the file
+        const fileRef = ref(storage, path);
+
+        // Delete the file
+        await deleteObject(fileRef);
+        
+        return { success: true, message: "File deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        return { success: false, message: error.message };
+    }
+};
+
+
+module.exports ={app,uploadFile,deleteFile}

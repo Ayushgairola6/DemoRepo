@@ -9,8 +9,9 @@ UserRouter.post("/Register",controller.data.upload.single("image"),controller.da
 .post("/resetPassword",controller.data.ResetPassword)
 .get("/welcome",controller.data.verifyToken,controller.data.WelcomeMessage)
 .post('/verify',controller.data.verifyToken)
-.post("/files/media",controller.data.upload.single("file"),controller.data.UploadMedia)
+.post("/media/upload/images",controller.data.upload.array("files"),controller.data.UploadMedia)
 .get("/profile/data",controller.data.SendUserData)
 .post("/profile/update",controller.data.UpdateProfile)
+.post("/media/delete",controller.data.DeleteImage)
 
 exports.Route = {UserRouter};

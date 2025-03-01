@@ -6,7 +6,7 @@ const openpgp = require('openpgp');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const client = require("../db.js")
-const { uploadFile } = require('./FirebaseConfig/FirebaseConfig.js')
+const { uploadFile,deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
 
 // multer for handling image parsing
 const multer = require("multer");
@@ -204,17 +204,7 @@ const WelcomeMessage = (req, res) => {
 };
 
 
-//function to upload media files like 5 images and videos
 
-
-const UploadMedia = async (req,res)=>{
-  try{
-      const image = req.file;
-      const video = req.file;
-  }catch(error){
-    throw error;
-  }
-}
 
 // update profile related data;
 const UpdateProfile = async (req, res) => {
@@ -335,4 +325,158 @@ WHERE users.id = $1;;
     throw error;
   }
 }
-exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile}
+
+//function to upload media files like 5 images and videos
+
+
+const UploadMedia = async (req,res)=>{
+  try{
+   const token = req.headers.authorization.split(" ")[1];
+   if(!token)return res.status(400).json({message:"Unauthorized"});
+
+   if(!req.files || req.files.length <1){
+    return res.status(400).json({message:"Please choose atleast one image"});
+   }
+   
+   const Images = req.files;
+      let ImageUrl = [];
+   // if there are images only then upload em to the database
+   if (Images && Images.length > 0) {
+    ImageUrl = await Promise.all(
+        Images.map(file => uploadFile(file, "images/"))
+    );
+}
+
+  let User_Id ;
+
+    const decoded = jwt.verify(token,process.env.JWT_SECRET,(err,result)=>{
+      if(err){
+        throw new Error("User is not verified")
+      }
+      User_Id = result.id;
+    })
+
+    if(!User_Id)return res.status(400).json({message:"User not found"});
+   
+     const query = `UPDATE users 
+SET images = COALESCE(images, '{}') || $1 
+WHERE id = $2
+RETURNING images
+`
+   const data = await client.query(query,[ImageUrl,User_Id]);
+
+   if(data.rowCount===0){
+    return res.status(400).json({message:"Error while inserting images"});
+   }
+
+ UserDataQuery = `SELECT users.id, users.name, users.email, 
+       COALESCE(users.about, '') AS about, 
+       COALESCE(users.age, 0) AS age, 
+       COALESCE(users.gender, '') AS gender, 
+       COALESCE(users.location, '') AS location, 
+       COALESCE(users.images, ARRAY[]::text[]) AS images,
+       COALESCE(preferences.interests, ARRAY[]::text[]) AS interests, 
+       COALESCE(preferences.hobbies, ARRAY[]::text[]) AS hobbies, 
+       COALESCE(preferences.relationship_goal, '') AS relationship_goal
+      FROM users
+      LEFT JOIN preferences ON preferences.user_id = users.id
+      WHERE users.id = $1;;
+`;
+
+    const userProfile = await client.query(UserDataQuery,[User_Id]);
+    if(userProfile.rows.length===0){
+      return res.status(400).json({message:"User not found"});
+    }
+
+   return res.status(200).json(userProfile.rows)
+   
+  
+  }catch(error){
+    throw error;
+  }
+}
+
+
+// delete images
+const DeleteImage = async(req,res)=>{
+  try{
+   const token = req.headers.authorization.split(" ")[1];
+   if(!token)return res.status(400).json({message:"Unauthorized"});
+
+   const imageUrl = req.body.url;
+
+   if(!imageUrl){
+    return res.status(400).json({message:"No image url found"})
+  };
+
+    const decoded = jwt.decode(token);
+
+    const User_Id = decoded.id;
+
+    if(!User_Id){return res.status(400).json({message:"User not found"})};
+     
+    const query = `SELECT images from users WHERE id = $1`;
+    const data = await client.query(query,[User_Id]);
+
+    if(data.rows.length ===0){return res.status(400).json({message:"User not found"})};
+
+    const images = data.rows[0].images;
+
+
+    const IsValid = images.includes(imageUrl);
+
+  
+    if(!IsValid){
+      console.log("not a valid url or you are not authorized to delete this image")
+      return res.status(400).json({message:"Image cannot be deleted"});
+    }
+      
+
+   const deleteQuery = `UPDATE users 
+SET images = array_remove(images, $1) 
+WHERE id = $2
+RETURNING *`
+
+const response = await client.query(deleteQuery,[imageUrl,User_Id]);
+
+// deleting the image from the userdata 
+if(response.rowCount===0){
+  return res.status(400).json({message:"Error while deleting the image"});
+}
+
+// deleting the image from firebase firestore
+    const Order = await deleteFile(imageUrl);
+
+    if(!Order){
+      return res.status(400).json({message:"Error while deleting image"});
+
+    }
+    // sending the update data of the user
+    const  UserDataQuery = `SELECT users.id, users.name, users.email, 
+       COALESCE(users.about, '') AS about, 
+       COALESCE(users.age, 0) AS age, 
+       COALESCE(users.gender, '') AS gender, 
+       COALESCE(users.location, '') AS location, 
+       COALESCE(users.images, ARRAY[]::text[]) AS images,
+       COALESCE(preferences.interests, ARRAY[]::text[]) AS interests, 
+       COALESCE(preferences.hobbies, ARRAY[]::text[]) AS hobbies, 
+       COALESCE(preferences.relationship_goal, '') AS relationship_goal
+      FROM users
+      LEFT JOIN preferences ON preferences.user_id = users.id
+      WHERE users.id = $1;;
+`;
+
+    const userProfile = await client.query(UserDataQuery,[User_Id]);
+    if(userProfile.rows.length===0){
+      return res.status(400).json({message:"User not found"});
+    }
+
+   return res.status(200).json(userProfile.rows)
+   
+  }catch(error){
+    throw error;
+  }
+}
+exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage}
+
+
