@@ -5,6 +5,7 @@ const createChatsTable = async ()=>{
       const query = `CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     chatroom_id VARCHAR(800),
+    roomName TEXT,
     sender_id INT REFERENCES users(id) ON DELETE CASCADE,
     receiver_id INT REFERENCES users(id) ON DELETE CASCADE,
     message TEXT NOT NULL,
