@@ -48,7 +48,7 @@ app.use(express.json())
 // getting the server access to the routes
 app.use(feed_Router.route.FeedRouter);
 app.use(User_Router.Route.UserRouter);
-app.use(PaymentRouter);
+// app.use(PaymentRouter);
 app.use(quizRouter);
 app.use(chatRouter.route.ChatRouter)
 

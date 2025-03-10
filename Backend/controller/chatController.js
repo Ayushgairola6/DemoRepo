@@ -47,33 +47,12 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const { roomName, message, user1, user2 } = data;
+    const { roomName, message, user1, user2,sender_name } = data;
 
-    try {
-      // Fetch the latest message in this room to check if the room exists
-      const lastMessageQuery = `
-        SELECT sender_id, receiver_id 
-        FROM messages 
-        WHERE roomName = $1 
-        ORDER BY timestamp DESC 
-        LIMIT 1
-      `;
-      const lastMessageResult = await client.query(lastMessageQuery, [roomName]);
-
-      let sender_id = user1;
-      let receiver_id = user2;
-
-      if (lastMessageResult.rows.length > 0) {
-        // Room exists, check last sender and receiver
-        const lastSender = lastMessageResult.rows[0].sender_id;
-        const lastReceiver = lastMessageResult.rows[0].receiver_id;
-
-        if (user1 === lastSender) {
-          sender_id = user2;
-          receiver_id = user1;
-        }
-      }
-
+    const sender_id= user1;
+    const receiver_id = user2;
+     
+     if(!sender_id || !receiver_id) return ;
       // Insert the new message
       const InsertQuery = `
         INSERT INTO messages (roomName, message, sender_id, receiver_id) 
@@ -82,13 +61,11 @@ io.on("connection", (socket) => {
       const insertResponse = await client.query(InsertQuery, [roomName, message, sender_id, receiver_id]);
 
       if (insertResponse.rowCount > 0) {
-        io.to(roomName).emit("newMessage", { sender_id,receiver_id, message: message });
+        io.to(roomName).emit("newMessage", { sender_id,receiver_id, message: message,sender_name:sender_name });
       }
-    } catch (error) {
-      console.error("Error handling message:", error);
-    }
+    } )
   });
-});
+
 
 // function to send all matches user has matched with
 const SendMatches = async (req, res) => {
