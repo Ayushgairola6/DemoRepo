@@ -49,7 +49,7 @@ const SendProfiles = async (req,res)=>{
         `
 
         // const SearchQuery = `SELECT * FROM users LIMIT 20`
-        const data = await client.query(SearchQuery,[userId],gender);
+        const data = await client.query(SearchQuery,[userId,gender]);
         
         if(data.rows.length===0){
             return res.status(400).json({message:"No matches found"})
