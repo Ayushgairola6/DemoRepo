@@ -31,20 +31,16 @@ const uploadFile = async (file, path) => {
             throw new Error("File size exceeds the 20MB limit.");
         }
 
-        // Allowed MIME types (videos + images)
-        const allowedMimeTypes = [
-            "video/mp4", "video/mpeg", "video/quicktime", "video/x-msvideo", // Video types
-            "image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp" // Image types
-        ];
-        
+        // Validate MIME type
+        const allowedMimeTypes = ["video/mp4", "video/mpeg", "video/quicktime", "video/x-msvideo", "image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp" ];
         if (!allowedMimeTypes.includes(file.mimetype)) {
-            throw new Error("Invalid file type. Please upload a video or image file.");
+            throw new Error("Invalid file type. Please upload a video file.");
         }
 
-        const filename = file.originalname || `file_${Date.now()}`;
+        const filename = file.originalname || `video_${Date.now()}`;
         const storageRef = ref(storage, `${path}/${Date.now()}_${filename}`);
 
-        // Upload file
+        // Upload without tracking progress
         await uploadBytes(storageRef, file.buffer);
 
         // Get download URL
@@ -55,7 +51,6 @@ const uploadFile = async (file, path) => {
         throw error;
     }
 };
-
 
 
 
