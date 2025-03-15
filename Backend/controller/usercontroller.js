@@ -33,7 +33,7 @@ const verifyToken = (req, res, next) => {
   if (!token) return res.status(400).send('Access denied. No token provided.');
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET,(err,data)=>{
-      if(err) return res.status(400).json({message:"Unauthorized"})
+      if(err) return ;
 
     req.user = data;;
 
