@@ -13,5 +13,6 @@ UserRouter.post("/Register",controller.data.upload.single("image"),controller.da
 .get("/profile/data",controller.data.SendUserData)
 .post("/profile/update",controller.data.UpdateProfile)
 .post("/media/delete",controller.data.DeleteImage)
+.post("/media/download",controller.data.DownloadMedia)
 
 exports.Route = {UserRouter};

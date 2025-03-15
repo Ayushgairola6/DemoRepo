@@ -11,6 +11,7 @@ const { uploadFile,deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
 // multer for handling image parsing
 const multer = require("multer");
 
+//  only upto 20 mb are allowed 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 1024 * 1024 * 20 } })
 
 dotenv.config();
@@ -29,10 +30,10 @@ const options = {
 // Middleware to verify JWT tokens
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
-  if (!token) return res.status(403).send('Access denied. No token provided.');
+  if (!token) return res.status(400).send('Access denied. No token provided.');
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET,(err,data)=>{
-      if(err) throw new Error("Unauthorized")
+      if(err) return res.status(400).json({message:"Unauthorized"})
 
     req.user = data;;
 
@@ -477,6 +478,26 @@ if(response.rowCount===0){
     throw error;
   }
 }
-exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage}
+
+// download media files
+
+const DownloadMedia = async (req,res)=>{
+  try{
+
+    const imageUrl = req.body.url
+    console.log(imageUrl)
+    if(!imageUrl){
+      return res.status(400).json({message:"This request cannot be processed"})
+    }
+
+    
+
+
+  }catch(error){
+    throw new Error(error)
+  }
+}
+
+exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia}
 
 

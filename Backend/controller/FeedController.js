@@ -26,23 +26,32 @@ const SendProfiles = async (req,res)=>{
              }
             userId = data.id;
          })
-
+           
 
          if(!userId){
             return res.status(400).json("error no user id found");
          }
+
+         const checkGender = `SELECT * FROM users WHERE id = $1`;
+         const User_gender = await client.query(checkGender,[userId]);
+         const gender =User_gender.rows[0].gender;
+        
+         if(User_gender.rows.length===0 || !gender){
+            return res.status(200).json({message:"Please update you profile first"})
+         }
+
         //Fetch 30 users at a time and set a random offset to make the profiles random
         const SearchQuery = `SELECT u.id ,u.name , u.gender ,u.age,u.images ,u.about, p.interests,p.hobbies,p.city,p.state,p.country FROM users u  JOIN 
         preferences p ON u.id = p.user_id 
-        WHERE u.id != $1
+        WHERE u.id != $1 AND u.gender != $2
         LIMIT 20;
 
         `
 
         // const SearchQuery = `SELECT * FROM users LIMIT 20`
-        const data = await client.query(SearchQuery,[userId]);
+        const data = await client.query(SearchQuery,[userId],gender);
         
-        if(data.rows.length ===0){
+        if(data.rows.length===0){
             return res.status(400).json({message:"No matches found"})
         }
        return res.status(200).json(data.rows);

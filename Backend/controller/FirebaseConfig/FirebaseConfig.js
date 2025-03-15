@@ -23,32 +23,36 @@ const storage = getStorage(app);
 const uploadFile = async (file, path) => {
     try {
         if (!file || !file.buffer) {
-            throw new Error("Invalid file object received. Ensure you're using Multer.");
+            throw new Error("Invalid file object received.");
         }
 
-        const filename = file.originalname ? file.originalname : `file_${Date.now()}`; 
+        // Validate file size (20MB limit)
+        if (file.size > 20 * 1024 * 1024) {
+            throw new Error("File size exceeds the 20MB limit.");
+        }
+
+        // Validate MIME type
+        const allowedMimeTypes = ["video/mp4", "video/mpeg", "video/quicktime", "video/x-msvideo"];
+        if (!allowedMimeTypes.includes(file.mimetype)) {
+            throw new Error("Invalid file type. Please upload a video file.");
+        }
+
+        const filename = file.originalname || `video_${Date.now()}`;
         const storageRef = ref(storage, `${path}/${Date.now()}_${filename}`);
 
-        const uploadTask = uploadBytesResumable(storageRef, file.buffer);
-        // console.log(filename,storageRef,uploadTask)
-        await new Promise((resolve, reject) => {
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                },
-                (error) => reject(error),
-                () => resolve()
-            );
-        });
+        // Upload without tracking progress
+        await uploadBytes(storageRef, file.buffer);
 
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        // Get download URL
+        const downloadURL = await getDownloadURL(storageRef);
         return downloadURL;
     } catch (error) {
         console.error("Error uploading file:", error);
         throw error;
     }
 };
+
+
 
 // delete file
 
