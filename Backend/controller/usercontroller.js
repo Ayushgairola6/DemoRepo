@@ -5,6 +5,7 @@ const { Pool } = require('pg');
 const openpgp = require('openpgp');
 const dotenv = require('dotenv');
 const fs = require('fs');
+const cookieParser = require("cookie-parser");
 const client = require("../db.js")
 const { uploadFile,deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
 
@@ -28,27 +29,27 @@ const options = {
 
 
 // Middleware to verify JWT tokens
+
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  if (!token) return res.status(400).send('Access denied. No token provided.');
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET,(err,data)=>{
-      if(err){
-        if(err.name==="TokenExpiredError"){
-          return res.status(401).json({message:"Token has expired"});
-        }else if(err.name==="JsonWebTokenError"){
-          return res.status(401).json({message:"Invalid token"});
-        }else{
-          return res.status(500).json({message:"Internal Server error"});
-        }
-      } 
-    });
-    req.user = decoded;
+  const token = req.cookies["auth-token"];
+   // Make sure you are correctly accessing the cookie
+  if (!token) return res.status(400).send("Access denied. No token provided.");
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token has expired" });
+      } else if (err.name === "JsonWebTokenError") {
+        return res.status(401).json({ message: "Invalid token" });
+      } else {
+        return res.status(500).json({ message: "Internal Server error" });
+      }
+    }
+    req.user = decoded; // Now correctly setting req.user
     next();
-  } catch (err) {
-    throw  err;
-  }
+  });
 };
+
 
 // Encrypt data using OpenPGP
 const encryptData = async (data) => {
@@ -70,9 +71,7 @@ const Register  = async (req, res) => {
     
      const { name, email, password } = req.body;
 const image = req.file
-// console.log(interests)
-// console.log(Array(interests))
-  //edge cases if some fields are missing
+
 
 
     if(!name||!email||!password||!image){
@@ -102,12 +101,7 @@ const image = req.file
       return res.status(400).json({message:"Please try again later"})
     }
     const hashedPassword = await  bcrypt.hash(password, 10);
-    
-
-
-
-    
-  
+      
 
     // Insert user details into the database
     const InsertQuery = `INSERT INTO users (name, email, hashed_password,images) 
@@ -122,11 +116,7 @@ const image = req.file
       return res.status(400).json({message:"error while creating and account , please try again"})
     }
 
-   
-    
-
-
-    res.status(201).json({ message: 'User registered successfully!' });
+    res.status(200).json({ message: 'User registered successfully!' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error registering user.' });
@@ -156,6 +146,13 @@ const Login = async (req, res) => {
     if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
    // Create a JWT token for the newly logged in user
     const token = jwt.sign({ id: result.rows[0].id,name:result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
+   
+    res.cookie("auth-token",token,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV==="production",
+      sameSite:"Strict",
+      maxAge:3*60*60*1000,// valid for only 3 whole hours
+    })
 
     res.status(200).json({ message: 'Login successful!', token });
   } catch (err) {
@@ -225,21 +222,7 @@ const UpdateProfile = async (req, res) => {
     }
 
     // Extract token from headers
-    const UserToken = req.headers.authorization?.split(" ")[1];
-    if (!UserToken) {
-      console.log("No token provided");
-      return res.status(400).json({ message: "No token provided" });
-    }
-
-    // Verify JWT token
-    let User_Id;
-    try {
-      const decoded = jwt.verify(UserToken, process.env.JWT_SECRET);
-      User_Id = decoded.id;
-    } catch (error) {
-      console.log("Token expired or invalid");
-      return res.status(400).json({ message: "Token expired or invalid" });
-    }
+    const User_Id = req.user.id;
 
     if (!User_Id) {
       console.log("Error in UserId");
@@ -285,19 +268,15 @@ const UpdateProfile = async (req, res) => {
   } catch (err) {
     console.error("Error in UpdateProfile:", err);
   }
-};  
+}; 
+
+
 //  send  user specific data only using userId
 
 const SendUserData = async(req,res)=>{
   try{
-      const userToken = req.headers.authorization.split(" ")[1];
-      if(!userToken){
-        console.log("no token");
-        return res.status(400).json({message:"Invalid token"});}
-       
-      const verified = jwt.decode(userToken)
-       const user_id= verified.id;  
-
+      
+       const user_id= req.user.id;  
 
       if(!user_id){
         console.log("No userId")
@@ -338,8 +317,7 @@ WHERE users.id = $1;;
 
 const UploadMedia = async (req,res)=>{
   try{
-   const token = req.headers.authorization.split(" ")[1];
-   if(!token)return res.status(400).json({message:"Unauthorized"});
+
 
    if(!req.files || req.files.length <1){
     return res.status(400).json({message:"Please choose atleast one image"});
@@ -354,14 +332,9 @@ const UploadMedia = async (req,res)=>{
     );
 }
 
-  let User_Id ;
+  const User_Id =req.user.id;
 
-    const decoded = jwt.verify(token,process.env.JWT_SECRET,(err,result)=>{
-      if(err){
-        throw new Error("User is not verified")
-      }
-      User_Id = result.id;
-    })
+   
 
     if(!User_Id)return res.status(400).json({message:"User not found"});
    
@@ -407,8 +380,7 @@ RETURNING images
 // delete images
 const DeleteImage = async(req,res)=>{
   try{
-   const token = req.headers.authorization.split(" ")[1];
-   if(!token)return res.status(400).json({message:"Unauthorized"});
+   
 
    const imageUrl = req.body.url;
 
@@ -416,9 +388,8 @@ const DeleteImage = async(req,res)=>{
     return res.status(400).json({message:"No image url found"})
   };
 
-    const decoded = jwt.decode(token);
 
-    const User_Id = decoded.id;
+    const User_Id = req.user.id;
 
     if(!User_Id){return res.status(400).json({message:"User not found"})};
      
@@ -504,6 +475,6 @@ const DownloadMedia = async (req,res)=>{
   }
 }
 
-exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia}
+exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia,}
 
 

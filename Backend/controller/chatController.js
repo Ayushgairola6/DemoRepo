@@ -70,18 +70,9 @@ io.on("connection", (socket) => {
 // function to send all matches user has matched with
 const SendMatches = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) return res.status(400).json({ message: "Error Unauthorized" });
-
-    let userId;
-    try {
-      const verified = jwt.verify(token, process.env.JWT_SECRET);
-      userId = verified.id;
-    } catch (error) {
-      throw error;
-    }
-
+    
+    const userId = req.user.id;
+  
     if (!userId) return res.status(400).json({ message: "Error! Please try again later" });
 
     // Search for user in matches table and send the matched users profile data

@@ -41,20 +41,10 @@ ORDER BY MIN(q.id)`;
 	// send quiz results based on the quiz answers 
 	const GetQuizResult = async (req,res)=>{
      try{
-     	const userToken = req.headers.authorization.split(" ")[1];
-     	if(!userToken){
-     		return res.status(400).json("No token found");
-     	}
     
-   
-
-     	let UserId;
-
-      const verified = jwt.verify(userToken,jwt_Secret,(err,result)=>{
-         if(err) throw new Error("Invalid userToken");
-
-         UserId = result.id;
-      })
+   	const UserId = req.user.id;
+   if(!userId)return res.status(400).json({message:"Error please try again later!"})
+      
       
       // sending both answer and question id with parameters in headers;
     const response = req.body;

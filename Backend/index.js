@@ -4,6 +4,7 @@ const http = require("http");
 const cors = require("cors");
 const bodyParser = require("body-parser")
 const httpServer = http.createServer(app);
+const cookieParser = require("cookie-parser");
 const {Server} = require("socket.io");
 require("dotenv").config();
 const io = new Server(httpServer,{
@@ -34,8 +35,16 @@ const preference = require("./Model/PreferenceTable");
 // matchTable.table.creatematchTable();
 // require('./Model/MatchQuizTables')
 // require("./Model/chatsTable")
+
+
+//Middle ware for access control origin cors verification
+
+
+
+
 // cors to establish a connection between front end and backend
-app.use(cors());
+app.use(cors({origin:"http://localhost:5173",credentials:true}));
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 // Parse application/x-www-form-urlencoded app.use(bodyParser.urlencoded({ extended: false })); 

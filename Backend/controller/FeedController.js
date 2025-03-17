@@ -13,20 +13,10 @@ const client = require("../db.js")
 
 const SendProfiles = async (req,res)=>{
     try{
-         const token = req.headers.authorization.split(' ')[1];
-         if(!token){
-            return res.status(400).json({message:"No token found"})
-         }
+        
 
-          let userId ;
-         const verified = jwt.verify(token,jwt_Secret ,(err,data)=>{
-            if(err){
-            throw err;
-            return ;
-             }
-            userId = data.id;
-         })
-           
+          const userId =req.user.id;
+       
 
          if(!userId){
             return res.status(400).json("error no user id found");
@@ -49,7 +39,7 @@ const SendProfiles = async (req,res)=>{
         `
 
         // const SearchQuery = `SELECT * FROM users LIMIT 20`
-        const data = await client.query(SearchQuery,[userId,gender]);
+        const data = await client.query(SearchQuery,[req.user.id,gender]);
         
         if(data.rows.length===0){
             return res.status(400).json({message:"No matches found"})
@@ -76,23 +66,12 @@ const SendProfiles = async (req,res)=>{
     return res.status(400).json({ message: "Missing required fields" });
 }
 
-        const UserToken = req.headers.authorization.split(" ")[1];
-        if (!UserToken) {
-            console.log("No token")
-            return res.status(400).json({ message: "No token provided" });
-        }
-    
+        
 
         // Verify JWT Token
-        let User_Id ;
+        const User_Id = req.user.id ;
 
-        const decoded = jwt.verify(UserToken, jwt_Secret ,(error,resukt)=>{
-            if(error){
-                return res.status(400).json("token expired || token error")
-            }
-         User_Id = resukt.id;
-
-        });
+    
         
         //Insert  User prference if not exists from the database if exists update them
 const SearchQuery = `SELECT * FROM preferences WHERE user_id = $1`
@@ -239,19 +218,11 @@ const HandleLikes = async (req, res) => {
             return res.status(400).json({ error: "No user found" });
         }
 
-        const token = req.headers.authorization?.split(" ")[1]; // Optional chaining to prevent errors
-        if (!token) {
-            return res.status(400).json({ error: "No token provided" });
-        }
+      
        
         // Verify token and extract user ID
-        let userId;
-        try {
-            const decoded = jwt.verify(token, jwt_Secret);
-            userId = decoded.id;
-        } catch (err) {
-            return res.status(401).json({ error: "Invalid token" });
-        }
+        const userId = req.user.id;
+       
 
         if (!userId) {
             return res.status(400).json({ error: "No user ID found" });
