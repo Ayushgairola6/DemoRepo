@@ -30,25 +30,7 @@ const options = {
 
 // Middleware to verify JWT tokens
 
-const verifyToken = (req, res, next) => {
-  const token = req.cookies["auth-token"];
-   // Make sure you are correctly accessing the cookie
-  if (!token) return res.status(400).send("Access denied. No token provided.");
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      if (err.name === "TokenExpiredError") {
-        return res.status(401).json({ message: "Token has expired" });
-      } else if (err.name === "JsonWebTokenError") {
-        return res.status(401).json({ message: "Invalid token" });
-      } else {
-        return res.status(500).json({ message: "Internal Server error" });
-      }
-    }
-    req.user = decoded; // Now correctly setting req.user
-    next();
-  });
-};
 
 
 // Encrypt data using OpenPGP
@@ -475,6 +457,6 @@ const DownloadMedia = async (req,res)=>{
   }
 }
 
-exports.data = {verifyToken,ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia,}
+exports.data = {ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia,}
 
 

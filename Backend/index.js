@@ -12,7 +12,28 @@ const io = new Server(httpServer,{
         origin:"*"
     }
 }); 
-module.exports = {io,httpServer};
+
+
+const verifyToken = (req, res, next) => {
+  const token = req.cookies["auth-token"];
+   // Make sure you are correctly accessing the cookie
+  if (!token) return res.status(400).send("Access denied. No token provided.");
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token has expired" });
+      } else if (err.name === "JsonWebTokenError") {
+        return res.status(401).json({ message: "Invalid token" });
+      } else {
+        return res.status(500).json({ message: "Internal Server error" });
+      }
+    }
+    req.user = decoded; // Now correctly setting req.user
+    next();
+  });
+};
+module.exports = {io,httpServer,verifyToken};
 
 // importing Routes
 const feed_Router = require("./Routers/FeedRouter");

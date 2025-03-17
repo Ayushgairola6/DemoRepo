@@ -1,10 +1,10 @@
 const controller = require("../controller/chatController");
 const express = require("express");
 const ChatRouter = express.Router();
-const authenticate = require("../controller/userController.js")
+const {verifyToken} = require("../index.js")
 
-ChatRouter.get("/all/matches",authenticate.data.verifyToken,controller.data.SendMatches)
-ChatRouter.get("/all/Chats/:roomName",authenticate.data.verifyToken,controller.data.SendChats)
+ChatRouter.get("/all/matches",verifyToken,controller.data.SendMatches)
+ChatRouter.get("/all/Chats/:roomName",verifyToken,controller.data.SendChats)
 
 
 exports.route = {ChatRouter};
