@@ -13,7 +13,7 @@ UserRouter.post("/Register",controller.data.upload.single("image"),controller.da
 .post("/media/upload/images",verifyToken,controller.data.upload.array("files"),controller.data.UploadMedia)
 .get("/profile/data",verifyToken,controller.data.SendUserData)
 .post("/profile/update",verifyToken,controller.data.UpdateProfile)
-.post("/media/delete"verifyToken,controller.data.DeleteImage)
+.post("/media/delete",verifyToken,controller.data.DeleteImage)
 .post("/media/download",verifyToken,controller.data.DownloadMedia)
 
 exports.Route = {UserRouter};
