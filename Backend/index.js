@@ -6,17 +6,23 @@ const bodyParser = require("body-parser")
 const httpServer = http.createServer(app);
 const cookieParser = require("cookie-parser");
 const {Server} = require("socket.io");
+const jwt = require("jsonwebtoken")
 require("dotenv").config();
-const io = new Server(httpServer,{
-    cors:{
-        origin:"*"
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:5173", // Ensure this matches your client origin
+        credentials: true, // Allow credentials
     }
-}); 
+});
 
 
+
+
+//auth middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies["auth-token"];
-   // Make sure you are correctly accessing the cookie
+  
+   
   if (!token) return res.status(400).send("Access denied. No token provided.");
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -33,6 +39,8 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
+
 module.exports = {io,httpServer,verifyToken};
 
 // importing Routes
@@ -58,7 +66,7 @@ const preference = require("./Model/PreferenceTable");
 // require("./Model/chatsTable")
 
 
-//Middle ware for access control origin cors verification
+
 
 
 

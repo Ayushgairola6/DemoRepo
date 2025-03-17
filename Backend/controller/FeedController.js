@@ -222,7 +222,6 @@ const HandleLikes = async (req, res) => {
        
         // Verify token and extract user ID
         const userId = req.user.id;
-       
 
         if (!userId) {
             return res.status(400).json({ error: "No user ID found" });

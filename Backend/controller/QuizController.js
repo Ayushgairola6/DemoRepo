@@ -43,7 +43,7 @@ ORDER BY MIN(q.id)`;
      try{
     
    	const UserId = req.user.id;
-   if(!userId)return res.status(400).json({message:"Error please try again later!"})
+   if(!UserId)return res.status(400).json({message:"Error please try again later!"})
       
       
       // sending both answer and question id with parameters in headers;
@@ -131,7 +131,6 @@ const SendUsers = async (validResponses,UserId)=>{
     `;
 
     const accounts = await client.query(secondquery, [totalQuestions,UserId]);
-    console.log(accounts.rows)
     return accounts.rows;
 
    const query = `SELECT u.username,u.images from users u LEFT JOIN quiz_response q ON q `

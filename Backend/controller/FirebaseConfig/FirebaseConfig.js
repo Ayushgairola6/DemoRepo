@@ -45,7 +45,7 @@ const uploadFile = async (file, path) => {
         const storageRef = ref(storage, `${path}/${Date.now()}_${filename}`);
 
         // Upload file
-        await uploadBytes(storageRef, file.buffer);
+        await uploadBytesResumable(storageRef, file.buffer);
 
         // Get download URL
         const downloadURL = await getDownloadURL(storageRef);

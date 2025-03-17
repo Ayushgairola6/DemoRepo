@@ -5,12 +5,13 @@ require("dotenv").config();
 
 // verification of user token sent with socket headers
 io.use((socket, next) => {
-  const token = socket.handshake.auth?.token;
-  if (!token) {
+  const token = socket.handshake.headers.cookie;
+  const verification = token.split("=")[1]
+  if (!token || !verification) {
     return next(new Error("Authentication error: Token missing"));
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(verification, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log("Error while verification");
       return next(new Error("Authentication error: Invalid token"));

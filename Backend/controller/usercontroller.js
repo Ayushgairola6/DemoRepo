@@ -196,7 +196,6 @@ const WelcomeMessage = (req, res) => {
 const UpdateProfile = async (req, res) => {
   try {
     const { about, age, location, interests, hobbies, relationShip, gender } = req.body;
-
     // Validate required fields
     if (!about || !age || !location || !interests || !hobbies || !relationShip || !gender) {
       console.log("All fields are mandatory");
@@ -205,7 +204,6 @@ const UpdateProfile = async (req, res) => {
 
     // Extract token from headers
     const User_Id = req.user.id;
-
     if (!User_Id) {
       console.log("Error in UserId");
       return res.status(400).json({ message: "User ID not found" });
