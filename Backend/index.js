@@ -10,10 +10,11 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config();
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173", // Ensure this matches your client origin
-        credentials: true, // Allow credentials
-    }
+        origin: ["http://localhost:5173", "https://luvlens.netlify.app"], 
+        credentials: true,
+    },
 });
+
 
 
 
@@ -72,7 +73,22 @@ const preference = require("./Model/PreferenceTable");
 
 
 // cors to establish a connection between front end and backend
-app.use(cors({origin:"http://localhost:5173",credentials:true}));
+const allowedOrigins = [
+    "http://localhost:5173", // Local development
+    "https://luvlens.netlify.app", // Production
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (allowedOrigins.includes(origin) || !origin) { // Allow requests from these origins or non-browser clients
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true, // Enable credentials (e.g., cookies)
+}));
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
