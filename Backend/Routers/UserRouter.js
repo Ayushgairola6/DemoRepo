@@ -16,7 +16,7 @@ UserRouter.post("/Register",controller.data.upload.single("image"),controller.da
 .post("/media/download",verifyToken,controller.data.DownloadMedia);
 
 //verify the user token
-UserRouter.post('/verify',(req,res)=>{
+UserRouter.post('/verify',verifyToken,(req,res)=>{
 	const token = req.cookies["auth-token"];
 	if(!token)return res.status(400).json({message:"No token found"});
      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {

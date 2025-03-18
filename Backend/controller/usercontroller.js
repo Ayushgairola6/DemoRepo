@@ -128,15 +128,17 @@ const Login = async (req, res) => {
     if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
    // Create a JWT token for the newly logged in user
     const token = jwt.sign({ id: result.rows[0].id,name:result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
-   
-    res.cookie("auth-token",token,{
-      httpOnly:true,
-      secure:process.env.NODE_ENV==="production",
-      sameSite:"none",
-      maxAge:3*60*60*1000,// valid for only 3 whole hours
-    })
+   console.log("setting cookies")
+    
+res.cookie("auth-token", token, {
+  httpOnly: true,
+  secure: true, 
+  sameSite: "None", 
+  maxAge: 3 * 60 * 60 * 1000,
+});
 
-    res.status(200).json({ message: 'Login successful!' });
+  console.log("Cookie Set:", token);
+   return res.status(200).json({ message: 'Login successful!' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error logging in.' });

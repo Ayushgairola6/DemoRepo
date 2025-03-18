@@ -21,9 +21,8 @@ const io = new Server(httpServer, {
 
 //auth middleware
 const verifyToken = (req, res, next) => {
-      console.log("Cookies received:", req.cookies)
   const token = req.cookies["auth-token"];
-  
+      console.log("Cookies received:", req.cookies)
    
   if (!token) return res.status(400).send("Access denied. No token provided.");
 
@@ -75,20 +74,17 @@ const preference = require("./Model/PreferenceTable");
 
 
 // cors to establish a connection between front end and backend
-const allowedOrigins = [
-    "http://localhost:5173", // Local development
-    "https://luvlens.netlify.app", // Production
-];
+const allowedOrigins = ["http://localhost:5173/", "https://luvlens.netlify.app/"];
 
 app.use(cors({
-    origin: function (origin, callback) {
-        if (allowedOrigins.includes(origin) || !origin) { // Allow requests from these origins or non-browser clients
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true, // Enable credentials (e.g., cookies)
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
 }));
 
 app.use(cookieParser());
