@@ -74,17 +74,23 @@ const preference = require("./Model/PreferenceTable");
 
 
 // cors to establish a connection between front end and backend
-const allowedOrigins = ["http://localhost:5173/", "https://luvlens.netlify.app/"];
+const allowedOrigins = [
+  "http://localhost:5173", 
+  "https://luvlens.netlify.app"
+];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.some((allowed) => allowed === origin)) {
       callback(null, true);
     } else {
+      console.log(`Blocked by CORS: ${origin}`); // Debugging
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.use(cookieParser());
