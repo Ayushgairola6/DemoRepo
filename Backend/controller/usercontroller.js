@@ -136,7 +136,7 @@ const Login = async (req, res) => {
       maxAge:3*60*60*1000,// valid for only 3 whole hours
     })
 
-    res.status(200).json({ message: 'Login successful!', token });
+    res.status(200).json({ message: 'Login successful!' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error logging in.' });
@@ -255,7 +255,7 @@ const UpdateProfile = async (req, res) => {
 
 const SendUserData = async(req,res)=>{
   try{
-      
+      console.log(req.user)
        const user_id= req.user.id;  
 
       if(!user_id){

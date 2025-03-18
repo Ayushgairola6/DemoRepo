@@ -21,6 +21,7 @@ const io = new Server(httpServer, {
 
 //auth middleware
 const verifyToken = (req, res, next) => {
+      console.log("Cookies received:", req.cookies)
   const token = req.cookies["auth-token"];
   
    
@@ -36,7 +37,8 @@ const verifyToken = (req, res, next) => {
         return res.status(500).json({ message: "Internal Server error" });
       }
     }
-    req.user = decoded; // Now correctly setting req.user
+    req.user = decoded;
+    console.log("Token successfully verified:", decoded) // Now correctly setting req.user
     next();
   });
 };

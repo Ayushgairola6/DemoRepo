@@ -13,6 +13,7 @@ const client = require("../db.js")
 
 const SendProfiles = async (req,res)=>{
     try{
+      console.log(req.user)
         
 
           const userId =req.user.id;
@@ -58,6 +59,8 @@ const SendProfiles = async (req,res)=>{
 
     const Get_Profiles = async (req, res) => {
     try {
+      console.log(req.user)
+        
        // get the preferences
         const {country,state,city,age,relationship_goal,hobbies,interests,gender} = req.body;
 
