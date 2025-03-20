@@ -40,13 +40,13 @@ const SendProfiles = async (req,res)=>{
         `
 
         // const SearchQuery = `SELECT * FROM users LIMIT 20`
-        const data = await client.query(SearchQuery,[req.user.id,gender]);
-        
-        if(data.rows.length===0){
-            return res.status(400).json({message:"No matches found"})
-        }
-       return res.status(200).json(data.rows);
-
+        client.query(SearchQuery, [userId,gender], (err, result) => {
+            if (err) {
+              console.error(" Error fetching matches:", err);
+              return res.status(500).json({ message: "Server error" });
+            }
+            return res.status(200).json(result.rows.length > 0 ? result.rows : { messages: "No users found" });
+          });
 
     }catch(error){
         throw error;

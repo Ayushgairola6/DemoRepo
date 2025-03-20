@@ -137,7 +137,6 @@ res.cookie("auth-token", token, {
   maxAge: 3 * 60 * 60 * 1000,
 });
 
-  console.log("Cookie Set:", token);
    return res.status(200).json({ message: 'Login successful!' });
   } catch (err) {
     console.error(err);
@@ -191,7 +190,44 @@ const WelcomeMessage = (req, res) => {
   return res.status(200).json({ message: 'Welcome to the platform! Start with the Match Chemistry Quiz to find your best matches You are good to go.' });
 };
 
+//  send  user specific data only using userId
 
+const SendUserData = async(req,res)=>{
+  try{
+       const user_id= req.user.id;  
+
+      if(!user_id){
+        console.log("No userId")
+        return res.status(400).json({message:"No user id found"});
+      }
+   
+
+      const  FindQuery = `SELECT users.id, users.name, users.email, 
+       COALESCE(users.about, '') AS about, 
+       COALESCE(users.age, 0) AS age, 
+       COALESCE(users.gender, '') AS gender, 
+       COALESCE(users.location, '') AS location, 
+       COALESCE(users.images, ARRAY[]::text[]) AS images,
+       COALESCE(preferences.interests, ARRAY[]::text[]) AS interests, 
+       COALESCE(preferences.hobbies, ARRAY[]::text[]) AS hobbies, 
+       COALESCE(preferences.relationship_goal, '') AS relationship_goal
+FROM users
+LEFT JOIN preferences ON preferences.user_id = users.id
+WHERE users.id = $1;;
+`;
+       client.query(FindQuery,[user_id],(err,result)=>{
+        if(err){
+          return res.status(500).json({message:"Internal server error"})
+        }
+        return res.status(200).json(result.rows);
+       });
+      
+   
+
+  }catch(error){
+    throw error;
+  }
+}
 
 
 // update profile related data;
@@ -239,60 +275,24 @@ const UpdateProfile = async (req, res) => {
         hobbies = EXCLUDED.hobbies,
         relationship_goal = EXCLUDED.relationship_goal;
     `;
-    const preferencesUpdateResult = await client.query(UpdatePreferencesQuery, [User_Id, safeInterests, safeHobbies, relationShip]);
+    client.query(UpdatePreferencesQuery, [User_Id, safeInterests, safeHobbies, relationShip],(err,result)=>{
+      if(err){
+        return res.status(500).json({message:"Internal server error"})
+      }
+      if(result.rowCount>0){
+        return res.status(200).json({ message: "Profile updated successfully" });
+      }
+    });
 
-    if (preferencesUpdateResult.rowCount === 0) {
-      console.log("Error updating preferences table");
-      return res.status(400).json({ message: "Error updating preferences" });
-    }
+    
 
-    return res.status(200).json({ message: "Profile updated successfully" });
   } catch (err) {
     console.error("Error in UpdateProfile:", err);
   }
 }; 
 
 
-//  send  user specific data only using userId
 
-const SendUserData = async(req,res)=>{
-  try{
-      console.log(req.user)
-       const user_id= req.user.id;  
-
-      if(!user_id){
-        console.log("No userId")
-        return res.status(400).json({message:"No user id found"});
-      }
-   
-
-      const  FindQuery = `SELECT users.id, users.name, users.email, 
-       COALESCE(users.about, '') AS about, 
-       COALESCE(users.age, 0) AS age, 
-       COALESCE(users.gender, '') AS gender, 
-       COALESCE(users.location, '') AS location, 
-       COALESCE(users.images, ARRAY[]::text[]) AS images,
-       COALESCE(preferences.interests, ARRAY[]::text[]) AS interests, 
-       COALESCE(preferences.hobbies, ARRAY[]::text[]) AS hobbies, 
-       COALESCE(preferences.relationship_goal, '') AS relationship_goal
-FROM users
-LEFT JOIN preferences ON preferences.user_id = users.id
-WHERE users.id = $1;;
-`;
-      const User = await client.query(FindQuery,[user_id]);
-      if(User.rows.length===0){
-        
-          
-        return res.status(400).json({message:"user not found"});
-      }
-
-      return res.status(200).json(User.rows);
-   
-
-  }catch(error){
-    throw error;
-  }
-}
 
 //function to upload media files like 5 images and videos
 

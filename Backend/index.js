@@ -1,18 +1,18 @@
-const express= require("express");
+const express = require("express");
 const app = express();
 const http = require("http");
 const cors = require("cors");
 const bodyParser = require("body-parser")
 const httpServer = http.createServer(app);
 const cookieParser = require("cookie-parser");
-const {Server} = require("socket.io");
+const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
 const io = new Server(httpServer, {
-    cors: {
-        origin: ["http://localhost:5173", "https://luvlens.netlify.app"], 
-        credentials: true,
-    },
+  cors: {
+    origin: ["http://localhost:5173", "https://luvlens.netlify.app"],
+    credentials: true,
+  },
 });
 
 
@@ -22,8 +22,7 @@ const io = new Server(httpServer, {
 //auth middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies["auth-token"];
-      console.log("Cookies received:", req.cookies)
-   
+
   if (!token) return res.status(400).send("Access denied. No token provided.");
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -37,45 +36,32 @@ const verifyToken = (req, res, next) => {
       }
     }
     req.user = decoded;
-    console.log("Token successfully verified:", decoded) // Now correctly setting req.user
     next();
   });
 };
 
 
-module.exports = {io,httpServer,verifyToken};
+module.exports = { io, httpServer, verifyToken };
 
 // importing Routes
 const feed_Router = require("./Routers/FeedRouter");
 const User_Router = require("./Routers/UserRouter");
-const {PaymentRouter} = require('./Routers/PaymentRouter')
+const { PaymentRouter } = require('./Routers/PaymentRouter')
 const chatRouter = require("./Routers/ChatRouter");
-const {quizRouter} = require("./Routers/QuizRouter")
+const { quizRouter } = require("./Routers/QuizRouter")
 // importing tables
 const userTable = require("./Model/UsersTable");
 const LikeTable = require('./Model/Likestable');
 const matchTable = require('./Model/Matchestable');
-const {createMediaTable} = require("./Model/MediaTable");
+const { createMediaTable } = require("./Model/MediaTable");
 const preference = require("./Model/PreferenceTable");
 
-// require("./Query.js")
-// intialization of tables
-// userTable.data.createUsersTable()
-//  preference.table.CreatePreferenceTable();
-//  LikeTable.table.CreateLikeTable();
-// matchTable.table.creatematchTable();
-// require('./Model/MatchQuizTables')
-// require("./Model/chatsTable")
 
 
-
-
-
-
-
-// cors to establish a connection between front end and backend
+// cors to establish a connection between front end and backend only two domains
+//  have been given the access to communicate with this api
 const allowedOrigins = [
-  "http://localhost:5173", 
+  "http://localhost:5173",
   "https://luvlens.netlify.app"
 ];
 
@@ -96,13 +82,12 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
-// Parse application/x-www-form-urlencoded app.use(bodyParser.urlencoded({ extended: false })); 
- app.use(bodyParser.json());
- 
+app.use(bodyParser.json());
 
- 
- // Parse application/x-www-form-urlencoded
-  app.use(bodyParser.urlencoded({ extended: false}));
+
+
+// Parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
 // getting the server access to the routes
 app.use(feed_Router.route.FeedRouter);
 app.use(User_Router.Route.UserRouter);
@@ -110,13 +95,12 @@ app.use(User_Router.Route.UserRouter);
 app.use(quizRouter);
 app.use(chatRouter.route.ChatRouter)
 
-// Create an HTTP server
 
 
 
 
 // listen the server at port 8080
- httpServer.listen(process.env.PORT,'0.0.0.0',()=>{
-	console.log("server connected")
+httpServer.listen(process.env.PORT, '0.0.0.0', () => {
+  console.log("server connected")
 })
 
