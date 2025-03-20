@@ -1,4 +1,4 @@
-const client = require("../db.js");
+const {client,Client} = require("../db.js");
 const jwt = require("jsonwebtoken");
 const { io } = require("../index.js");
 require("dotenv").config();
@@ -23,6 +23,11 @@ io.use((socket, next) => {
 
 // client sends a connection event and we receive it
 io.on("connection", (socket) => {
+  if (!socket.user || !socket.user.id || !socket.user.name) {
+    console.log("Invalid socket user data");
+    return socket.disconnect();
+  }
+
   const user1 = socket.user.id;
   const user1name = socket.user.name;
   let roomName;
@@ -32,40 +37,67 @@ io.on("connection", (socket) => {
       console.log("User2 not found");
       return socket.disconnect();
     }
-    
-    const user2name = user2.selectedUser.name;
-    const sortedIds = [user1, user2.selectedUser.id].sort().join("_");
-      roomName = `chat_${sortedIds}`;
 
+    const user2name = user2.selectedUser.name;
+    const user2id = user2.selectedUser.id;
+
+    // Ensure consistent room naming (sorted user IDs)
+    const sortedIds = [user1, user2id].sort().join("_");
+    roomName = `chat_${sortedIds}`;
 
     socket.join(roomName);
-    io.to(roomName).emit("roomJoined", { roomName, user1, user2: user2.selectedUser.id });
+    io.to(roomName).emit("roomJoined", { roomName, user1, user2: user2id });
   });
 
   socket.on("message", async (data) => {
-    if (!data.roomName) {
-      console.log("User not in a room");
-      return;
-    }
-
-    const { roomName, message, user1, user2,sender_name } = data;
-
-    const sender_id= user1;
-    const receiver_id = user2;
-     
-     if(!sender_id || !receiver_id) return ;
-      // Insert the new message
-      const InsertQuery = `
-        INSERT INTO messages (roomName, message, sender_id, receiver_id) 
-        VALUES ($1, $2, $3, $4)
-      `;
-      const insertResponse = await client.query(InsertQuery, [roomName, message, sender_id, receiver_id]);
-
-      if (insertResponse.rowCount > 0) {
-        io.to(roomName).emit("newMessage", { sender_id,receiver_id, message: message,sender_name:sender_name });
+    try {
+      if (!data.roomName || !data.message) {
+        console.log("Invalid message data");
+        return;
       }
-    } )
+
+      const { roomName, message, user1, user2, sender_name } = data;
+
+      // Ensure sender & receiver IDs are always in order
+      const sortedIds = [user1, user2].sort();
+      const sender_id = sortedIds[0] === user1 ? user1 : user2;
+      const receiver_id = sortedIds[0] === user1 ? user2 : user1;
+
+      if (!sender_id || !receiver_id) return;
+
+      // Database Transaction for Safe Insert
+      const client = await Client.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertQuery = `
+          INSERT INTO messages (roomName, message, sender_id, receiver_id) 
+          VALUES ($1, $2, $3, $4) RETURNING *;
+        `;
+        const insertResponse = await client.query(insertQuery, [roomName, message, sender_id, receiver_id]);
+
+        if (insertResponse.rowCount > 0) {
+          io.to(roomName).emit("newMessage", {
+            sender_id,
+            receiver_id,
+            message,
+            sender_name,
+          });
+        }
+
+        await client.query("COMMIT");
+      } catch (dbError) {
+        await client.query("ROLLBACK");
+        console.error("Error inserting message:", dbError);
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error("Socket message error:", error);
+    }
   });
+});
+
 
 
 // function to send all matches user has matched with

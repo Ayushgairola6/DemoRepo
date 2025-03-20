@@ -74,10 +74,7 @@ const preference = require("./Model/PreferenceTable");
 
 
 // cors to establish a connection between front end and backend
-const allowedOrigins = [
-  "http://localhost:5173", 
-  "https://luvlens.netlify.app"
-];
+const allowedOrigins = ["http://localhost:5173/", "https://luvlens.netlify.app/"];
 
 app.use(cors({
   origin: (origin, callback) => {
