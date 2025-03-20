@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwt_Secret = process.env.JWT_SECRET;
 
-const client = require("../db.js")
+const {client} = require("../db.js")
 
 
 // sending quizquestions with category and their respective answers from the db

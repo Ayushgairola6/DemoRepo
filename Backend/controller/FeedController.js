@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv")
 dotenv.config();
 const jwt_Secret = process.env.JWT_SECRET;
-const client = require("../db.js")
+const {client} = require("../db.js")
 
 		// function that'll send users profiles based on his preference or 
 		// randomly until he sets some filters

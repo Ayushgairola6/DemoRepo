@@ -6,7 +6,7 @@ const openpgp = require('openpgp');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const cookieParser = require("cookie-parser");
-const client = require("../db.js")
+const {client} = require("../db.js")
 const { uploadFile,deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
 
 // multer for handling image parsing

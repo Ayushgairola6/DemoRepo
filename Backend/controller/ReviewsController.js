@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const jwt_key = 12345;
-const client = require("../db.js")
+const {client} = require("../db.js")
 
 
 
