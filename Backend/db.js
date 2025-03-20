@@ -1,4 +1,4 @@
-const {Pool } = require("pg");
+const {Client } = require("pg");
 require("dotenv").config();
 
 
@@ -24,7 +24,7 @@ require("dotenv").config();
 	
 // })
 
-const client = new Pool({
+const client = new Client({
   connectionString: process.env.PG_URI,ssl: {
     rejectUnauthorized: false
   }
@@ -36,4 +36,4 @@ client.connect()
 
 
 
-exports.data = {client,Pool};
+module.exports = {client,Client};
