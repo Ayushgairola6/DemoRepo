@@ -51,24 +51,19 @@ io.on("connection", (socket) => {
   socket.on("message", async (data) => {
     try {
 
-      if (!data.message || !data.user1 || !data.user2) {
+      if (!data.message || !data.sender || !data.receiver || !data.sender_name) {
         console.log("Invalid message data");
         return;
       }
-//  if any data is missing
-if (!data || !data.message || !data.user1 || !data.user2) {
-  console.log(" Invalid message data:", data);
-  return;
-}
-      const { message, user1, user2, sender_name } = data;
+      const { message, sender, receiver, sender_name } = data;
       // if both sender and reciver are same return with error
-      if (user1 === user2) {
+      if (sender === receiver) {
         console.log(" Sender and Receiver cannot be the same!");
         return;
     }
 
     // if ids are not an integer
-    if (typeof user1 !== "number" || typeof user2 !== "number") {
+    if (typeof user1 !== "number" || typeof receiver !== "number") {
       console.log(" Invalid user IDs. Expected numbers, got:", { user1, user2 });
       return;
   }
@@ -78,12 +73,13 @@ if (!data || !data.message || !data.user1 || !data.user2) {
     return;
 }
       // Recalculate room name to avoid undefined room issues
-      const sortedIds = [user1, user2].sort().join("_");
+      const sortedIds = [user1, receiver].sort().join("_");
       const roomName = `chat_${sortedIds}`;
       // Ensure sender & receiver IDs are always in order
-      const sender_id = user1;
-      const receiver_id = user2;
-
+      const sender_id = sender;
+      const receiver_id = receiver;
+    // console.log(sender_id,"sender_id")
+    // console.log(receiver_id,'receiver_id');
       if (!sender_id || !receiver_id) {
         console.log("Sender or receiver ID not found");
         return;
@@ -119,7 +115,7 @@ if (!data || !data.message || !data.user1 || !data.user2) {
           sender_name,
         });
       }
-  
+
       client.query("COMMIT", (commitErr) => {
         if (commitErr) console.error("Commit Error:", commitErr);
       });

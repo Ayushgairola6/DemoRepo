@@ -128,10 +128,9 @@ const Login = async (req, res) => {
     if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
    // Create a JWT token for the newly logged in user
     const token = jwt.sign({ id: result.rows[0].id,name:result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
-   console.log("setting cookies")
     
 res.cookie("auth-token", token, {
-  httpOnly: true,
+  httpOnly:true,
   secure: true, 
   sameSite: "none", 
   maxAge: 3 * 60 * 60 * 1000,
