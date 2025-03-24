@@ -21,13 +21,13 @@ JOIN quizoptions o ON q.id = o.question_id
 GROUP BY q.id, q.category, q.question 
 ORDER BY MIN(q.id)`;
 
-    client.query(query, (err, result) => {
-      if (err) {
-        console.error(" Error fetching matches:", err);
-        return res.status(500).json({ message: "Server error" });
-      }
-      return res.status(200).json(result.rows > 0 ? result.rows : { messages: "No quiz data found" });
-    });
+    const data = await client.query(query);
+    if(data.rows.length===0){
+      return res.status(200).json([]);
+    }else{
+      return res.status(200).json(data.rows);
+      
+    }
 
   } catch (error) {
     throw error;
