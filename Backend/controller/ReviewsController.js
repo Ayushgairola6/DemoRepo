@@ -6,7 +6,7 @@ const {client} = require("../db.js")
 
 
 // insertin the reviews
-const Reviews = (req,res)=>{
+const Reviews = async (req,res)=>{
   try{
   	// text body and token sent from frontend
       const {text} = req.body;
