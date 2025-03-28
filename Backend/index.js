@@ -49,7 +49,7 @@ const User_Router = require("./Routers/UserRouter");
 const { PaymentRouter } = require('./Routers/PaymentRouter')
 const chatRouter = require("./Routers/ChatRouter");
 const { quizRouter } = require("./Routers/QuizRouter")
-const{ReviewRouter} =require("./Routers/ReviewRouter");
+const ReviewRouter = require("./Routers/ReviewRouter");
 // importing tables
 const userTable = require("./Model/UsersTable");
 const LikeTable = require('./Model/Likestable');
@@ -92,10 +92,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // getting the server access to the routes
 app.use(feed_Router.route.FeedRouter);
 app.use(User_Router.Route.UserRouter);
+app.use(ReviewRouter.route.ReviewRouter);
 // app.use(PaymentRouter);
 app.use(quizRouter);
 app.use(chatRouter.route.ChatRouter)
-app.use(ReviewRouter);
 
 
 

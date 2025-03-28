@@ -4,6 +4,7 @@ const ReviewRouter = express.Router();
 const {verifyToken} = require("../index.js")
 
 
-ReviewRouter.post("/review/data",verifyToken,controller.data.RecieveReviews);
+ReviewRouter.post("/review/data",verifyToken,controller.data.RecieveReviews)
+ReviewRouter.get("/reviews/get/all",verifyToken,controller.data.SendReviews)
 
-module.exports ={ReviewRouter};
+exports.route ={ReviewRouter};
