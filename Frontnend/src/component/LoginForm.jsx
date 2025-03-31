@@ -37,7 +37,7 @@ export default function LoginForm() {
   }
 try {
   setLoginState("pending")
-    const response = await axios.post("https://luvlensebackend.onrender.com/login", data,{withCredentials:true}, {
+    const response = await axios.post("/api/login", data,{withCredentials:true}, {
       headers: {
         "Content-Type": "application/json",
       },

@@ -35,7 +35,7 @@ const gender =useRef()
 async function Verify() {
   try {
     const response = await axios.post(
-      "https://luvlensebackend.onrender.com/verify",
+      "/api/verify",
       {},
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
@@ -53,7 +53,7 @@ async function Verify() {
 const GetUser = async () => {
   try {
     const response = await axios.get(
-      "https://luvlensebackend.onrender.com/profile/data",
+      "/api/profile/data",
       { withCredentials: true }
     );
     console.log("User Data:", response.data);
@@ -100,7 +100,7 @@ async function get_city() {
 const GetProfiles = async () => {
   try {
     const response = await axios.get(
-      "https://luvlensebackend.onrender.com/feed/profiles",
+      "/api/feed/profiles",
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
     console.log(response.data)
@@ -137,7 +137,7 @@ const get_Profiles = async () => {
 
   try {
     const response = await axios.post(
-      "https://luvlensebackend.onrender.com/feed/recommendation/filtered/profiles",
+      "/api/feed/recommendation/filtered/profiles",
       UserFilterInput,
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
@@ -153,7 +153,7 @@ const get_Profiles = async () => {
 const HandleLike = async (id, image) => {
   try {
     const response = await axios.post(
-      `https://luvlensebackend.onrender.com/like/${id}`,
+      `/api/like/${id}`,
       {},
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
@@ -177,7 +177,7 @@ const handleResponse = async (response) => {
 
   try {
     const data = await axios.post(
-      "https://luvlensebackend.onrender.com/quiz/response",
+      "/api/quiz/response",
       response,
       { withCredentials: true }
     );
@@ -200,7 +200,7 @@ async function UploadMedia(Form) {
     setUploadStatus("initialized");
 
     const response = await axios.post(
-      "https://luvlensebackend.onrender.com/media/upload/images",
+      "/api/media/upload/images",
       Form,
       { withCredentials: true }
     );

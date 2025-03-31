@@ -61,7 +61,7 @@ const RegisterForm = () => {
 
     try {
       setIsRegistered("pending")
-      const response = await axios.post("https://luvlensebackend.onrender.com/Register", Form, {
+      const response = await axios.post("/api/Register", Form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

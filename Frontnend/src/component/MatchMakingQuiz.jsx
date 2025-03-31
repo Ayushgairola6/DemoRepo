@@ -41,7 +41,7 @@ const Matchmaking = () => {
 
       setError("");
       const response = await axios.get(
-        "https://luvlensebackend.onrender.com/quiz/queries",
+        "/api/quiz/queries",
         { withCredentials: true },
         {
           headers: {

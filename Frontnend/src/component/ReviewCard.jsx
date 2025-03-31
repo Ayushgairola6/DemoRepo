@@ -9,7 +9,7 @@ function ReviewCard({ date, comment, rating }) {
 
     useEffect(() => {
         const getReviews = async () => {
-            const response = await axios.get("https://luvlensebackend.onrender.com/reviews/get/all", { withCredentials: true });
+            const response = await axios.get("/api/reviews/get/all", { withCredentials: true });
             setReviews(response.data);
         }
         getReviews();

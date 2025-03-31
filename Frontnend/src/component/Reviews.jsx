@@ -17,7 +17,7 @@ const Reviews = () => {
     if (Input.current.value === "" || rating===0) return;
     try {
       setStatus("pending")
-      const response = await axios.post("https://luvlensebackend.onrender.com/review/data", { review: Input.current.value ,rating:rating}, { withCredentials: true });
+      const response = await axios.post("/api/review/data", { review: Input.current.value ,rating:rating}, { withCredentials: true });
       if (response.data.message === "Review received successfully") {
         setStatus("success");
       }

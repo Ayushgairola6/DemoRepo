@@ -20,8 +20,8 @@ const Messages = () => {
 
  
 
-    try{//https://luvlensebackend.onrender.com
-     const response = await axios.get("https://luvlensebackend.onrender.com/all/matches",{withCredentials:true},{
+    try{///api
+     const response = await axios.get("/api/all/matches",{withCredentials:true},{
       headers:{
         "Content-Type":"application/json",
       }
@@ -48,7 +48,7 @@ useEffect(()=>{
   try{
   
    //socket port
-    socket.current = io("https://luvlensebackend.onrender.com",{
+    socket.current = io("/api",{
       withCredentials:true,
     });
    // emit a connection event 
@@ -89,7 +89,7 @@ useEffect(()=>{
   const getChats = async ()=>{
 
    try{
-    const response = await axios.get(`https://luvlensebackend.onrender.com/all/chats/${roomName}`,{withCredentials:true},{
+    const response = await axios.get(`/api/all/chats/${roomName}`,{withCredentials:true},{
       headers:{
         "Content-Type":"application/json"
       }

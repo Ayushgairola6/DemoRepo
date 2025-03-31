@@ -49,7 +49,7 @@ useEffect(()=>{
           setStatus("loading")
     try{
 
-      const response = await axios.post("https://luvlensebackend.onrender.com/profile/update",data,{withCredentials:true},{
+      const response = await axios.post("/api/profile/update",data,{withCredentials:true},{
         headers:{
           'Content-Type':"application/json",
         }

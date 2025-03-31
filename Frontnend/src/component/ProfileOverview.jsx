@@ -77,8 +77,8 @@ async function DeletImage(image){
     if(!data){
       return ;
     }
-    // https://luvlensebackend.onrender.com
-    const response = await axios.post("https://luvlensebackend.onrender.com/media/delete",data,{withCredentials:true},{
+    // /api
+    const response = await axios.post("/api/media/delete",data,{withCredentials:true},{
       headers:{
         "Content-Type":"application/json"
       }
