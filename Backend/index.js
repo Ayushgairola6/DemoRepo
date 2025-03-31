@@ -22,42 +22,30 @@ const io = new Server(httpServer, {
 //auth middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies["auth-token"];
-  const fallbackToken = req.headers.authorization.split(" ")[1];
-  if(!token || !fallbackToken){
-    return res.status(400).json({message:"NO auth token found"});
-  }
-  if (token ) {
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        if (err.name === "TokenExpiredError") {
-          return res.status(401).json({ message: "Token has expired" });
-        } else if (err.name === "JsonWebTokenError") {
-          return res.status(401).json({ message: "Invalid token" });
-        } else {
-          return res.status(500).json({ message: "Internal Server error" });
-        }
-      }
-      req.user = decoded;
-      next();
-    });
-  }else if(fallbackToken){
-    jwt.verify(fallbackToken, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        if (err.name === "TokenExpiredError") {
-          return res.status(401).json({ message: "Token has expired" });
-        } else if (err.name === "JsonWebTokenError") {
-          return res.status(401).json({ message: "Invalid token" });
-        } else {
-          return res.status(500).json({ message: "Internal Server error" });
-        }
-      }
-      req.user = decoded;
-      next();
-    });
+  const authHeader = req.headers.authorization;
+  const fallbackToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+  const finalToken = token || fallbackToken; // Use cookie token first, fallback to header token
+
+  if (!finalToken) {
+    return res.status(400).json({ message: "No auth token found" });
   }
 
-
+  jwt.verify(finalToken, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token has expired" });
+      } else if (err.name === "JsonWebTokenError") {
+        return res.status(401).json({ message: "Invalid token" });
+      } else {
+        return res.status(500).json({ message: "Internal Server error" });
+      }
+    }
+    req.user = decoded;
+    next();
+  });
 };
+
 
 
 module.exports = { io, httpServer, verifyToken };
@@ -83,7 +71,7 @@ const {CreateReviewTable} = require("./Model/reviewsTable")
 const allowedOrigins = [
   "http://localhost:5173",
   "https://luvlens.netlify.app",
-   "https://luvlensebackend.onrender.com"
+   "http://localhost:8080"
 ];
 
 app.use(cors({

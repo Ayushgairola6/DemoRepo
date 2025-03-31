@@ -37,11 +37,12 @@ export default function LoginForm() {
   }
 try {
   setLoginState("pending")
-    const response = await axios.post("/api/login", data,{withCredentials:true}, {
+    const response = await axios.post("http://localhost:8080/login", data,{withCredentials:true}, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+    localStorage.setItem("auth_token",response.data.token);
     // set isLogggedIn to true and store the token in the localStorage
     setIsloggedIn(true);
     setLoginState("success")

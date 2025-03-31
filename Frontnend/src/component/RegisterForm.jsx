@@ -61,7 +61,7 @@ const RegisterForm = () => {
 
     try {
       setIsRegistered("pending")
-      const response = await axios.post("/api/Register", Form, {
+      const response = await axios.post("http://localhost:8080/Register", Form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -1,24 +1,35 @@
-const {client } = require("../db.js");
+const { client } = require("../db.js");
 const jwt = require("jsonwebtoken");
 const { io } = require("../index.js");
+const cookie = require("cookie")
 require("dotenv").config();
 
 // verification of user token sent with socket headers
 io.use((socket, next) => {
-  const token = socket.handshake.headers.cookie;
-  const verification = token.split("=")[1]
-  if (!token || !verification) {
-    return next(new Error("Authentication error: Token missing"));
-  }
+  try {
+    // Parse cookies safely
+    const cookies = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : {};
+    const tokenFromCookie = cookies["auth-token"];
+    const tokenFromAuth = socket.handshake.auth?.token; // Handle missing auth field safely
+    const finalToken = tokenFromCookie || tokenFromAuth; // Prefer cookies but fallback to auth token
 
-  jwt.verify(verification, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      console.log("Error while verification");
-      return next(new Error("Authentication error: Invalid token"));
+    if (!finalToken) {
+      return next(new Error("Authentication error: No token provided"));
     }
-    socket.user = decoded;
-    next();
-  });
+
+    // Verify JWT token
+    jwt.verify(finalToken, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.log("Error while verifying token:", err.message);
+        return next(new Error("Authentication error: Invalid token"));
+      }
+      socket.user = decoded; // Attach user info to socket
+      next();
+    });
+  } catch (err) {
+    console.error("Socket middleware error:", err.message);
+    next(new Error("Internal Server Error"));
+  }
 });
 
 // client sends a connection event and we receive it
@@ -43,7 +54,7 @@ io.on("connection", (socket) => {
     // Ensure consistent room naming (sorted user IDs)
     const sortedIds = [user1, user2id].sort().join("_");
     const roomName = `chat_${sortedIds}`;
-    
+
     socket.join(roomName);
     io.to(roomName).emit("roomJoined", { roomName, user1, user2: user2id });
   });
@@ -60,68 +71,68 @@ io.on("connection", (socket) => {
       if (sender === receiver) {
         console.log(" Sender and Receiver cannot be the same!");
         return;
-    }
+      }
 
-    // if ids are not an integer
-    if (typeof user1 !== "number" || typeof receiver !== "number") {
-      console.log(" Invalid user IDs. Expected numbers, got:", { user1, user2 });
-      return;
-  }
-// if message is empty
-  if (message.trim() === "") {
-    console.log("Empty message detected. Ignoring...");
-    return;
-}
+      // if ids are not an integer
+      if (typeof user1 !== "number" || typeof receiver !== "number") {
+        console.log(" Invalid user IDs. Expected numbers, got:", { user1, user2 });
+        return;
+      }
+      // if message is empty
+      if (message.trim() === "") {
+        console.log("Empty message detected. Ignoring...");
+        return;
+      }
       // Recalculate room name to avoid undefined room issues
       const sortedIds = [user1, receiver].sort().join("_");
       const roomName = `chat_${sortedIds}`;
       // Ensure sender & receiver IDs are always in order
       const sender_id = sender;
       const receiver_id = receiver;
-    // console.log(sender_id,"sender_id")
-    // console.log(receiver_id,'receiver_id');
+      // console.log(sender_id,"sender_id")
+      // console.log(receiver_id,'receiver_id');
       if (!sender_id || !receiver_id) {
         console.log("Sender or receiver ID not found");
         return;
       }
 
-       //  Use a Pooled Client Directly (No `connect()`)
-    const insertQuery = `
+      //  Use a Pooled Client Directly (No `connect()`)
+      const insertQuery = `
     INSERT INTO messages (roomName, message, sender_id, receiver_id) 
     VALUES ($1, $2, $3, $4) RETURNING *;
   `;
 
-  //  intiated a new connection 
-  client.query("BEGIN", (err) => {
-    if (err) {
-      console.error("Transaction Begin Error:", err);
-      return;
-    }
-  
-    client.query(insertQuery, [roomName, message, sender_id, receiver_id], (err, insertResponse) => {
-      if (err) {
-        console.error("DB Insert Error:", err);
-        client.query("ROLLBACK", (rollbackErr) => {
-          if (rollbackErr) console.error("Rollback Error:", rollbackErr);
-        });
-        return;
-      }
-  
-      if (insertResponse.rowCount > 0) {
-        io.to(roomName).emit("newMessage", {
-          sender_id,
-          receiver_id,
-          message,
-          sender_name,
-        });
-      }
+      //  intiated a new connection 
+      client.query("BEGIN", (err) => {
+        if (err) {
+          console.error("Transaction Begin Error:", err);
+          return;
+        }
 
-      client.query("COMMIT", (commitErr) => {
-        if (commitErr) console.error("Commit Error:", commitErr);
+        client.query(insertQuery, [roomName, message, sender_id, receiver_id], (err, insertResponse) => {
+          if (err) {
+            console.error("DB Insert Error:", err);
+            client.query("ROLLBACK", (rollbackErr) => {
+              if (rollbackErr) console.error("Rollback Error:", rollbackErr);
+            });
+            return;
+          }
+
+          if (insertResponse.rowCount > 0) {
+            io.to(roomName).emit("newMessage", {
+              sender_id,
+              receiver_id,
+              message,
+              sender_name,
+            });
+          }
+
+          client.query("COMMIT", (commitErr) => {
+            if (commitErr) console.error("Commit Error:", commitErr);
+          });
+        });
       });
-    });
-  });
-  
+
     } catch (error) {
       console.error("General socket error:", error);
     }

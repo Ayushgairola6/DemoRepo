@@ -16,16 +16,23 @@ const Messages = () => {
   const [newMessage,setNewMessage] =useState([]);
   useEffect(()=>{
     // get the profiles user got matched with
+    const token = localStorage.getItem("auth_token");
   const getMatches = async ()=>{
 
  
 
-    try{///api
-     const response = await axios.get("/api/all/matches",{withCredentials:true},{
-      headers:{
-        "Content-Type":"application/json",
-      }
-    })
+    try{//http://localhost:8080
+      const response = await axios.get(
+        "http://localhost:8080/all/matches",
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Replace <your_token> with the actual token
+          }
+        }
+      );
+      
     setMatchedUsers(response.data);
     return response.data;
   }catch(error){
@@ -45,11 +52,13 @@ getMatches()
   const [selectedUser, setSelectedUser] = useState(null); 
 
 useEffect(()=>{
+  const token = localStorage.getItem("auth_token");
   try{
   
    //socket port
-    socket.current = io("/api",{
+    socket.current = io("http://localhost:8080",{
       withCredentials:true,
+      auth:{token}
     });
    // emit a connection event 
    socket.current.on("connect",()=>{
@@ -87,13 +96,19 @@ useEffect(()=>{
 //  get chats 
  useEffect(()=>{
   const getChats = async ()=>{
-
+  const token = localStorage.getItem("auth_token");
    try{
-    const response = await axios.get(`/api/all/chats/${roomName}`,{withCredentials:true},{
-      headers:{
-        "Content-Type":"application/json"
+    const response = await axios.get(
+      `http://localhost:8080/all/chats/${roomName}`,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        }
       }
-    })   
+    );
+    
   setMessages(response.data)
    }catch(error){
     throw error;

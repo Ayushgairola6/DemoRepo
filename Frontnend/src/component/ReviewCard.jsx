@@ -8,9 +8,18 @@ function ReviewCard({ date, comment, rating }) {
     const [reviews, setReviews] = useState(null);
 
     useEffect(() => {
+        const token = localStorage.getItem("auth_token")
         const getReviews = async () => {
-            const response = await axios.get("/api/reviews/get/all", { withCredentials: true });
-            setReviews(response.data);
+            const response = await axios.get(
+                "http://localhost:8080/reviews/get/all",
+                {
+                  withCredentials: true,
+                  headers: {
+                    "Authorization": `Bearer ${token}` 
+                  }
+                }
+              );
+                          setReviews(response.data);
         }
         getReviews();
     }, [])

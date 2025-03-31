@@ -47,13 +47,21 @@ useEffect(()=>{
 
   const senData = async (data)=>{
           setStatus("loading")
+          const token = localStorage.getItem("auth_token");
     try{
 
-      const response = await axios.post("/api/profile/update",data,{withCredentials:true},{
-        headers:{
-          'Content-Type':"application/json",
+      const response = await axios.post(
+        "http://localhost:8080/profile/update",
+        data,
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': "application/json",
+            'Authorization': `Bearer ${token}` // Replace <your_token> with the actual token
+          }
         }
-      })
+      );
+      
       setStatus("finished");
 
       setTimeout(()=>{

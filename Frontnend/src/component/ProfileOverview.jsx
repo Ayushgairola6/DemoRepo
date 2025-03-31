@@ -69,7 +69,7 @@ async function DeletImage(image){
 
   try{
    
-
+  const token = localStorage.getItem("auth_token")
     if(!image){
       return ;
     }
@@ -77,12 +77,19 @@ async function DeletImage(image){
     if(!data){
       return ;
     }
-    // /api
-    const response = await axios.post("/api/media/delete",data,{withCredentials:true},{
-      headers:{
-        "Content-Type":"application/json"
+    // http://localhost:8080
+    const response = await axios.post(
+      "http://localhost:8080/media/delete",
+      data,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // Replace <your_token> with your actual token
+        }
       }
-    })
+    );
+    
     setUser(response.data)
   }catch(error){
     throw error;

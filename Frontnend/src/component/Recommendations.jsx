@@ -8,7 +8,7 @@ const Recommendations = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("auth_token");
         const response = await axios.get("https://luvlensebackend.onrender/api/recommendations", {
           headers: { Authorization: `Bearer ${token}` },
         });

@@ -32,34 +32,48 @@ export const RecommendationProvider = ({ children }) => {
 const gender =useRef()
 // verify userToken and toggle login state to true
  // Verify User Login
-async function Verify() {
+ async function Verify() {
+  const token = localStorage.getItem("auth_token")
+
   try {
     const response = await axios.post(
-      "/api/verify",
+      "http://localhost:8080/verify",
       {},
-      { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
-    console.log(response.data)
-    if (response.data.message === "Verified") {
+    console.log(response.data);
+    if (response.data.message === "Token Verified") {
       setIsloggedIn(true);
     }
   } catch (error) {
-
     throw error;
   }
 }
 
 // Get User Data
 const GetUser = async () => {
+  const token = localStorage.getItem("auth_token")
+
   try {
     const response = await axios.get(
-      "/api/profile/data",
-      { withCredentials: true }
+      "http://localhost:8080/profile/data",
+      {
+        withCredentials: true,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     console.log("User Data:", response.data);
     setUser(response.data);
   } catch (error) {
-    console.log(error,"error in getting user data")
+    console.log(error, "error in getting user data");
     throw new Error(error);
   }
 };
@@ -98,12 +112,20 @@ async function get_city() {
 
 // Fetch Profiles for Recommendations
 const GetProfiles = async () => {
+  const token = localStorage.getItem("auth_token")
+
   try {
     const response = await axios.get(
-      "/api/feed/profiles",
-      { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      "http://localhost:8080/feed/profiles",
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
-    console.log(response.data)
+    console.log(response.data);
     setMatches(response.data);
   } catch (error) {
     throw error;
@@ -113,6 +135,7 @@ const GetProfiles = async () => {
 // Fetch Filtered Profiles Based on Filters
 const get_Profiles = async () => {
   setFetchState("pending");
+  const token = localStorage.getItem("auth_token")
 
   if (selectedInterests.length === 0 || selectedHobbies.length === 0) {
     alert("Some fields are empty");
@@ -137,9 +160,15 @@ const get_Profiles = async () => {
 
   try {
     const response = await axios.post(
-      "/api/feed/recommendation/filtered/profiles",
+      "http://localhost:8080/feed/recommendation/filtered/profiles",
       UserFilterInput,
-      { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     setFetchState("fulfilled");
     setFilteredResults(response.data);
@@ -148,14 +177,21 @@ const get_Profiles = async () => {
     console.log(err);
   }
 };
-
 // Handle Like Action
 const HandleLike = async (id, image) => {
+  const token = localStorage.getItem("auth_token")
+
   try {
     const response = await axios.post(
-      `/api/like/${id}`,
+      `http://localhost:8080/like/${id}`,
       {},
-      { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
 
     if (response.data.message === "It's a match!") {
@@ -174,12 +210,18 @@ const HandleLike = async (id, image) => {
 // Handle Quiz Response Submission
 const handleResponse = async (response) => {
   setQuizResponse("Updating...");
+  const token = localStorage.getItem("auth_token")
 
   try {
     const data = await axios.post(
-      "/api/quiz/response",
+      "http://localhost:8080/quiz/response",
       response,
-      { withCredentials: true }
+      {
+        withCredentials: true,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     setQuizMatch(data.data);
     setQuizResponse("successful");
@@ -196,13 +238,19 @@ const handleResponse = async (response) => {
 
 // Upload Media Function
 async function UploadMedia(Form) {
+  const token = localStorage.getItem("auth_token")
   try {
     setUploadStatus("initialized");
 
     const response = await axios.post(
-      "/api/media/upload/images",
+      "http://localhost:8080/media/upload/images",
       Form,
-      { withCredentials: true }
+      {
+        withCredentials: true,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     setUploadStatus("idle");
     setUser(response.data);
@@ -210,7 +258,6 @@ async function UploadMedia(Form) {
     throw error;
   }
 }
-
 
 
   return (

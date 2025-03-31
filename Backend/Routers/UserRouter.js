@@ -18,19 +18,25 @@ UserRouter.post("/Register",controller.data.upload.single("image"),controller.da
 //verify the user token
 UserRouter.post('/verify',verifyToken,(req,res)=>{
 	const token = req.cookies["auth-token"];
-	if(!token)return res.status(400).json({message:"No token found"});
-     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  const fallbackToken = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+  const finalToken = token || fallbackToken; // Prioritize cookie token, fallback to header
+
+  if (!finalToken) {
+    return res.status(400).json({ message: "No authentication token found" });
+  }
+
+  jwt.verify(finalToken, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError") {
         return res.status(401).json({ message: "Token has expired" });
       } else if (err.name === "JsonWebTokenError") {
         return res.status(401).json({ message: "Invalid token" });
       } else {
-        return res.status(500).json({ message: "Internal Server error" });
+        return res.status(500).json({ message: "Internal Server Error" });
       }
-    }else{
-    	return res.status(200).json({message:"Verified"});
     }
+
+    return res.status(200).json({ message: "Token Verified", user: decoded });
 
 })});
 

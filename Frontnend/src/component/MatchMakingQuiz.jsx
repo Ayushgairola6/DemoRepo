@@ -4,7 +4,7 @@ import { UseStore } from "../store/store";
 import { useNavigate, Link } from "react-router-dom";
 import Confetti from "react-confetti";
 import Quizres from "./QuizResults";
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const Matchmaking = () => {
   const { handleResponse, quizResponse, isLoggedIn } = UseStore();
@@ -36,16 +36,18 @@ const Matchmaking = () => {
   }, [isLoggedIn]);
 
   const StartQuiz = async () => {
+    const token = localStorage.getItem("auth_token");
     try {
       setStatus("loading");
 
       setError("");
       const response = await axios.get(
-        "/api/quiz/queries",
-        { withCredentials: true },
+        "http://localhost:8080/quiz/queries",
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "Authorization":`Bearer ${token}`
           },
         }
       );
@@ -95,7 +97,7 @@ const Matchmaking = () => {
   };
 
   const TutorialModal = () => (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
@@ -152,11 +154,11 @@ const Matchmaking = () => {
   );
 
   return (
-    
-    <motion.div 
-      initial={{opacity:0}} 
-      animate={{opacity:1,y:0}} 
-      transition={{duration:0.5}} 
+
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className="min-h-screen p-2 relative flex flex-col items-center bg-gradient-to-br from-purple-300 to-red-300"
     >
       {showTutorial && <TutorialModal />}
@@ -167,7 +169,7 @@ const Matchmaking = () => {
             {error}
           </div>
         )}
-        
+
         {quizData ? (
           <>
             <div className="mb-4 bg-white p-4 rounded-lg shadow-md">
@@ -175,7 +177,7 @@ const Matchmaking = () => {
                 Questions answered: <span className="font-bold">{response.length}</span> of <span className="font-bold">{quizData.length}</span>
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                <div 
+                <div
                   className="bg-gradient-to-r from-[#9a1f40] to-[#ff3366] h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(response.length / quizData.length) * 100}%` }}
                 ></div>
@@ -202,14 +204,13 @@ const Matchmaking = () => {
                     return (
                       <motion.div
                         whileHover={{ scale: 1.02 }}
-                        
+
                         key={i}
                         onClick={() => handleQuiz(query, e)}
-                        className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                          isSelected 
-                            ? "bg-green-100 border-2 border-green-500 text-green-700" 
+                        className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${isSelected
+                            ? "bg-green-100 border-2 border-green-500 text-green-700"
                             : "bg-white border border-gray-300 text-red-600 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         <p className="text-base md:text-lg font-medium">
                           {e.option_serial}. {e.option}
@@ -227,8 +228,8 @@ const Matchmaking = () => {
               <h1 className="text-2xl md:text-4xl font-bold mb-4">Find Your Perfect Match!</h1>
               <p className="text-lg md:text-xl mb-6">Take our personality quiz to discover people who share your values and interests.</p>
               {status === "idle" ? (
-                <button 
-                  onClick={StartQuiz} 
+                <button
+                  onClick={StartQuiz}
                   className="bg-gradient-to-r from-[#9a1f40] to-[#ff3366] text-white text-lg font-bold py-3 px-8 rounded-full hover:from-pink-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                 >
                   Start Quiz
@@ -240,8 +241,8 @@ const Matchmaking = () => {
               ) : (
                 <div className="text-red-500 font-bold">{error}</div>
               )}
-              <Link 
-                to="/ProfileList" 
+              <Link
+                to="/ProfileList"
                 className="block mt-6 text-gray-500 hover:text-gray-700 font-medium transition-colors duration-200"
               >
                 ← Back to Profiles
@@ -260,9 +261,9 @@ const Matchmaking = () => {
               whileTap={{ scale: 0.95 }}
               onClick={SubmitData}
               className="bg-gradient-to-r from-[#9a1f40] to-[#ff3366] text-white font-bold px-8 py-3 rounded-lg shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-200"
-              
+
             >
-              {response.length < quizData.length 
+              {response.length < quizData.length
                 ? `Answer ${quizData.length - response.length} more question${quizData.length - response.length === 1 ? '' : 's'}`
                 : "Find Your Matches!"
               }

@@ -11,13 +11,28 @@ const Reviews = () => {
   const [rating, setRating] = useState(0);
   // function to send reviews
   async function handleReviews() {
+    const token = localStorage.getItem("auth_token");
     if (isLoggedIn === false) {
       alert("Please login first");
     }
     if (Input.current.value === "" || rating===0) return;
     try {
       setStatus("pending")
-      const response = await axios.post("/api/review/data", { review: Input.current.value ,rating:rating}, { withCredentials: true });
+      const response = await axios.post(
+        "http://localhost:8080/review/data",
+        { 
+          review: Input.current.value, 
+          rating: rating 
+        },
+        { 
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Replace <your_token> with the actual token
+          }
+        }
+      );
+      
       if (response.data.message === "Review received successfully") {
         setStatus("success");
       }
