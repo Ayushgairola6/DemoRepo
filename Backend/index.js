@@ -22,7 +22,7 @@ const io = new Server(httpServer, {
 //auth middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies["auth-token"];
-  const fallbackToken = req.header.authorization.split(" ")[1];
+  const fallbackToken = req.headers.authorization.split(" ")[1];
   if(!token || !fallbackToken){
     return res.status(400).json({message:"NO auth token found"});
   }
