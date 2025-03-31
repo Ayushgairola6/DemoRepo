@@ -1,0 +1,89 @@
+
+.profile-overview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-size: cover;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  
+  
+  .profile-overview-card {
+      background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod); 
+    padding: 15px; 
+    border-radius: 10px; 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px; 
+    height: auto;
+    text-align: left; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    backdrop-filter: blur(100px);  
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+     }
+  .section-title {
+    font-size: 1.6rem; 
+    color: black;
+    margin-bottom: 8px; 
+    font-weight: bold;
+  }
+  
+ 
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px; 
+    margin-bottom: 12px; 
+  }
+  
+  .profile-pic {
+    width: 90px; 
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #333; 
+  }
+  
+  .basic-info h3,
+  .basic-info p {
+    color: #000; 
+    font-size: 1rem;
+    margin: 2px 0;
+    font-weight: normal;
+  }
+  
+  .match-chemistry-score {
+    margin-top: 12px;
+  }
+  
+  .match-chemistry-score h4 {
+    color: #ff2e63;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+ 
+  .edit-profile-btn {
+    margin-top: 12px; 
+    padding: 10px 16px;
+     background:linear-gradient(to right , #ff2e63,purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s;
+    font-weight: bold;
+  }
+  
+  .edit-profile-btn:hover {
+    background: linear-gradient(to right ,#ff8c94,rebeccapurple);
+  }
+  

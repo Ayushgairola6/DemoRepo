@@ -1,0 +1,524 @@
+
+
+
+
+.main-header { 
+    display: flex; 
+    justify-content:space-between;
+    align-items: center;
+
+    padding: 0.3rem 2rem;
+   background:#800020;
+   color:white;
+   /* background: black;
+    color: white;*/
+} 
+.container{
+    position: relative;
+ 
+ height: 100vh;
+
+}
+.navlinks{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    font-weight: 600;
+    font-size: 15px;
+  
+
+}
+.Search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem
+}
+
+.main-header input{
+    border-radius: 12px;
+    font-weight: 400;
+    border: 1px solid lightgray;
+    width: 6rem;
+    transition: width 0.2s linear;
+    background: linear-gradient(45deg , whitesmoke,ghostwhite);
+    text-align: center;
+}
+.main-header input:focus{
+    width: 8rem;
+    border: 2px solid skyblue;
+    outline: none;
+}
+
+.main-header #link{
+    text-decoration: none;
+    cursor: pointer;
+     transition: scale 0.2s ease-in;
+     padding: 0.1rem 0.3rem;
+}
+.main-header #link:hover{
+    scale: 1.2;
+    background-color: black;
+    border-radius: 15px;
+    color: white;
+    
+
+}
+
+.main-header button{
+    border-radius: 15px;
+   width: 5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: none;
+    text-align: center;
+    padding: 0.3rem;
+}
+
+
+
+
+
+.headings{
+padding: 0.3rem;
+
+}
+
+.carousel-track img {
+    height: 100vh;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.5s ease-in-out;
+    padding: 0.5rem;
+    background: linear-gradient(135deg,#e4cc9b, #c16e37);
+}
+
+.carousel-track img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: Smooth scrolling effect */
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+#sidebarMenu{
+    display: none;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-300%);
+    }
+}
+
+
+.headings h1{
+  text-transform: uppercase;
+  font-size:4.5rem;
+  font-weight: 550;
+ /*color: #9a1f40;*/
+}
+
+.headings span{
+   
+     background: linear-gradient(to right,#9a1f40,#ff7f50);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+ animation: shine 3s linear infinite;
+ background-size: 200%;
+}
+
+@keyframes shine{
+0%{
+    background-position: -200%;
+}
+100%{
+    background-position: 200%;
+}
+}
+
+#heart{
+    position: absolute;
+    z-index: -1;
+    transform: rotate(25deg);
+    right: 1rem;
+    bottom:3rem;
+    mix-blend-mode: multiply;
+    height: 10rem;
+}
+.headings h3{
+    text-transform: uppercase;
+    font-size: 1.4rem;
+
+}
+
+
+.Sidebar{
+  
+   background:floralwhite;
+
+}
+
+.close{
+    position: absolute;
+    left: 2rem;
+    top: 1rem;
+}
+.first{
+    margin-top: 3rem;
+}
+
+.Sidebar #link{
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+.Sidebar #link:hover{
+    background: dimgray;
+    color: white;
+}
+
+
+
+.footer { 
+     background:#800020;
+   color:white;
+      border-top: 1px solid black;
+   opacity: 0.7;
+  text-align: center;
+   height: 12rem;  
+
+
+} 
+.link{
+    display: flex;
+    align-items: center;
+  justify-content: space-evenly;
+
+}
+.link div{
+    padding: 0.3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+
+.features{
+   display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+        min-height: 100vh;
+}
+
+.features h3{
+    font-size: 2.4rem;
+}
+/* .features h3:hover{
+    text-decoration: underline;
+} */
+
+ .cards-container{
+   display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.3rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cards-container div{
+  
+    background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod);
+    border:0.1px solid darkred;
+
+    width: 20rem;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  
+    padding: 1rem;
+    box-sizing: border-box;
+   transition: box-shadow 0.3s ease-in ;
+}
+.cards-container div:hover{
+  box-shadow: 2px 2px 2px black;
+  /*transform: scale(1.2);*/
+}
+.cards-container div span{
+   font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+.cards-container div p{
+ font-size: smaller;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+.footer a { 
+    text-decoration: none; 
+    font-weight: 500;
+    color: black;
+} 
+
+
+
+
+
+
+@media(max-width: 1000px){
+  #sidebarMenu{
+    display: block;
+  }
+  
+  .navlinks{
+    display: none;
+  }
+  .carousel{
+
+  }
+  .hero{
+    flex-direction: column-reverse;
+
+  }
+  .sidebar{
+    display: none;
+  }
+  #heart{
+    display: none;
+  }
+   .cards-container div{
+    max-width: 55rem;
+  }
+  .headings h1{
+
+  font-size:3rem;
+}
+}
+
+
+#reviewheading{
+    font-size: 2.4rem;
+}
+
+.Reviews {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.review-card {
+    background: linear-gradient(45deg, lightgoldenrodyellow, palegoldenrod);
+    border: 0.1px solid darkred;
+    width: 18rem;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 1.7rem;
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease-in;
+    text-align: center;
+}
+
+.review-card:hover {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.review-card div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Reduced gap */
+    width: 100%;
+    justify-content: center;
+}
+
+.review-card img {
+    width: 40px;  /* Made the image smaller */
+    height: 40px; 
+    border-radius: 50%;
+}
+
+.review-card section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.review-card section span {
+    font-weight: 600;
+    margin-bottom: 0.2rem; /* Added a small gap between name and date */
+}
+
+.review-card p {
+    font-size: 0.9rem;
+    width: 90%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+
+
+.howitworks{
+
+    text-align: center;
+    font-weight: 500;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0.2rem;
+}
+/* .howitworks:hover{
+    transform: translateY(12px);
+
+    z-index: 999;
+} */
+.howitworks h2{
+    font-size: 2.2rem;
+}
+.howitworks p{
+    width: 70%;
+    font-size: large;
+}
+.howitworks:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.howitworks h5:hover {
+    color: #9a6d3a;
+    transition: color 0.3s ease-in-out;
+}
+
+.vision {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    /* gap:3rem; */
+}
+
+.vision div {
+    background: linear-gradient(45deg, lightgoldenrodyellow, palegoldenrod);
+    border: 0.1px solid darkred;
+    width: 18rem;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 1.7rem; 
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease-in;
+    text-align: center;
+    
+}
+
+.vision div:hover {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.vision h5 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem; 
+}
+
+.vision p {
+    font-size: 0.9rem;
+    width: 90%; 
+    padding: 0.5rem;
+    margin-bottom: 0.5rem; 
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+
+
+
+
+
+.carousel {
+    margin: auto;
+    height: 90%;
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+}
+
+.carousel-track {
+    display: flex;
+    animation: scroll 30s linear infinite;
+}
+
+.carousel-track img {
+   
+    height: 100vh;
+    flex-shrink: 0;
+    position: center;
+
+}
+
+.hero {
+    text-align: center; 
+    background: none; 
+    margin: 0.3rem;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+  
+} 

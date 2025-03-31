@@ -1,0 +1,148 @@
+/* Container for all profiles */
+/*.profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; 
+  padding: 20px;
+  box-sizing: border-box;
+}*/
+
+/* Individual profile card */
+/*.profile-card {
+  width: 300px; 
+  padding: 15px;
+ background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod);
+  border: 1px solid #ddd; 
+  
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}*/
+
+/* Profile image */
+/*.profile-image {
+  width: 100%; 
+  max-height: 15rem; 
+  margin-bottom: 15px; 
+   
+}*/
+
+/* Profile name */
+/*.profile-name {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}*/
+
+/* Profile location */
+/*.profile-location {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+}*/
+
+/* Profile hobbies */
+/*.profile-hobbies ul {
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+  text-align: left; 
+  margin-left: 0; 
+}
+
+.profile-hobbies li {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}*/
+
+/* Profile about section */
+/*.profile-about{
+  text-align: left;
+}
+.profile-about ul {
+  font-size: 1.2rem; 
+  color: #444;
+  list-style: none;
+  padding: 0;
+ margin-left: 0;
+  text-align: left;
+}
+.profile-about li{
+  font-size: 0.9rem;
+  
+}*/
+
+
+/* Container for all profiles */
+.profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; 
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Individual profile card */
+.profile-card {
+  width: 300px; 
+  padding: 15px;
+ background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod);
+  border: 1px solid #ddd; 
+  
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}
+
+/* Profile image */
+.profile-image {
+  width: 100%; 
+  max-height: 15rem; 
+  margin-bottom: 15px; 
+   
+}
+
+/* Profile name */
+.profile-name {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Profile location */
+.profile-location {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* Profile hobbies */
+.profile-hobbies ul {
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+  text-align: left; 
+  margin-left: 0; 
+}
+
+.profile-hobbies li {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Profile about section */
+.profile-about{
+  text-align: left;
+}
+.profile-about ul {
+  font-size: 1.2rem; 
+  color: #444;
+  list-style: none;
+  padding: 0;
+ margin-left: 0;
+  text-align: left;
+}
+.profile-about li{
+  font-size: 0.9rem;
+  
+}

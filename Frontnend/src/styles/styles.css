@@ -1,0 +1,97 @@
+/*:root {
+  --lime-green: #8ad38a;
+  --black: #2a2d29;
+  --lavender: #762f51;
+  --gold: #3e3e3c;
+  --white: #e6e6db;
+}*/
+
+/* General Styling */
+/*body {
+  background: url("C:/Users/karishma/register-page/public/images/background1.png") no-repeat center center fixed;
+  background-size: cover;
+  color: var(--black);
+  font-family: Arial, sans-serif;
+}*/
+
+/*h1, h3 {
+  color: var(--gold);
+}
+*/
+/*.container {
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.85); 
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 50px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+}*/
+
+/* Input Fields */
+/*input, select, textarea {
+  border: 2px solid var(--lime-green);
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: var(--lavender);
+  color: var(--black);
+}*/
+
+/*input:focus, select:focus, textarea:focus {
+  border-color: var(--gold);
+  outline: none;
+}*/
+
+/* Buttons */
+/*button {
+  background-color: var(--lime-green);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}*/
+
+/*button:hover {
+  background-color: var(--gold);
+  color: var(--black);
+}*/
+
+/* File Upload Section */
+/*input[type="file"] {
+  border: none;
+  background-color: var(--lavender);
+}
+*/
+/*ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+li {
+  background-color: var(--lime-green);
+  color: var(--white);
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+*/
+/* Miscellaneous */
+/*label {
+  font-weight: bold;
+  color: var(--black);
+}
+
+textarea {
+  resize: none;
+}
+.font-bold {
+  font-weight: bold;
+}
+.font-bold {
+  font-weight: bold;
+}
+*/

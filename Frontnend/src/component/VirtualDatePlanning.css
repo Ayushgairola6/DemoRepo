@@ -1,0 +1,61 @@
+/* Overall container for virtual date planning */
+.virtual-date-planning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  /* Card-style container for the virtual date planning content */
+  .virtual-date-planning-card {
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px; /* Adjusted max-width */
+    text-align: left;
+    backdrop-filter: blur(80px); /* Blurred background */
+  }
+  
+  /* Section title: Virtual Date Planning Resources */
+  .section-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff2e63; /* Red color for section title */
+    margin-bottom: 20px;
+  }
+  
+  /* Curated Virtual Date Ideas and Tips for Long-Distance Connections */
+  .virtual-date-content h3,
+  .virtual-date-tips h3 {
+    font-size: 1.4rem;
+    color: #ff2e63; /* Red color */
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Virtual Date Ideas list and Tips list */
+  .virtual-date-content ul,
+  .virtual-date-tips ul {
+    margin-left: 20px;
+    list-style-type: disc;
+  }
+  
+  /* List item styling */
+  .virtual-date-content li,
+  .virtual-date-tips li {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  /* Bold the title of the Virtual Date Planning Resources */
+  .virtual-date-planning-card h2 {
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  

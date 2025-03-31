@@ -1,0 +1,75 @@
+/* CoreValues.css */
+.core-values {
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.75rem;
+        box-shadow: 0 2px 4px black;
+
+    margin-bottom: 2rem;
+    max-width: 50rem;
+    margin-left: auto;
+    margin-right: auto;
+    transition: box-shadow 0.3s ease-in-out;
+    background: linear-gradient(to bottom, #fff6f7 5%, transparent 120%); 
+}
+  .core-values:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .core-values h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    font:bold;
+    color: black;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .core-values .content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.0rem;
+    padding: 1rem;
+
+  }
+  .core-values .box {
+        width: 90%;  
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 1.0rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 4px red;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+  
+ .core-values .box:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+.core-values .box h3{
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .core-values .box p {
+    color: #627089; 
+    margin-top: 1rem;
+  }
+  
+  
+  /* Media Query for responsiveness */
+  @media (min-width: 768px) {
+    .core-values .box {
+      width: 300px;
+    }
+  }
+
+  
+  
+  /* Media Query for responsiveness */
+  @media (min-width: 768px) {
+    .core-values .value-box {
+      width: 300px;
+    }
+  }
+  

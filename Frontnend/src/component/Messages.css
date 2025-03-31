@@ -1,0 +1,121 @@
+/* Overall layout for messages */
+.messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+  }
+  
+  /* Card-style container for all message sections */
+  .messages-card {
+       background: linear-gradient(45deg  ,lightgoldenrodyellow,palegoldenrod);  /* Semi-transparent white */
+    padding: 12px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 320px; /* Reduced max-width to make it square-shaped */
+    height: auto;
+    text-align: left;
+    backdrop-filter: blur(8px); /* Blurred background */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+  
+  /* Section title */
+  .section-title {
+    font-size: 1.4rem; /* Reduced font size */
+    font-weight: bold;
+    color: #ff2e63; /* Red color */
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  
+  /* Message section header */
+  .message-section h3 {
+    font-size: 1.2rem; /* Slightly smaller font */
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  /* Message card styling */
+  .message-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .message-card.unread {
+    border-left: 5px solid #ff2e63; /* Red border for unread messages */
+  }
+  
+  .message-card p {
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .timestamp, .status {
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: 10px;
+  }
+  
+  .status {
+    font-weight: bold;
+    color: #ff2e63;
+  }
+  
+  /* No messages found styling */
+  .no-messages {
+    color: red; /* Red for no messages found */
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  input{
+    background: white;
+  }
+  /* Input and buttons styling */
+  .message-input {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+
+  }
+  
+  .input-field {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  
+  .message-type-selector {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .send-btn {
+    padding: 12px 20px;
+    background-color: #ff2e63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s;
+  }
+  
+  .send-btn:hover {
+    background-color: #ff8c94;
+  }
+  
