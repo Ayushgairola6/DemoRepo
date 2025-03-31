@@ -6,8 +6,8 @@ const openpgp = require('openpgp');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const cookieParser = require("cookie-parser");
-const {client} = require("../db.js")
-const { uploadFile,deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
+const { client } = require("../db.js")
+const { uploadFile, deleteFile } = require('./FirebaseConfig/FirebaseConfig.js')
 
 // multer for handling image parsing
 const multer = require("multer");
@@ -47,55 +47,55 @@ const encryptData = async (data) => {
 };
 
 // User Registration
-const Register  = async (req, res) => {
- 
+const Register = async (req, res) => {
+
   try {
-    
-     const { name, email, password } = req.body;
-const image = req.file
+
+    const { name, email, password } = req.body;
+    const image = req.file
 
 
 
-    if(!name||!email||!password||!image){
-      return res.status(400).json({message:"All fields are required"})
+    if (!name || !email || !password || !image) {
+      return res.status(400).json({ message: "All fields are required" })
     }
 
 
-// check if the user already exists
+    // check if the user already exists
 
     const Check = `SELECT * FROM users WHERE email = $1`;
-    const USER = await client.query(Check,[email]);
- 
-    if(USER.rows.length>0){
+    const USER = await client.query(Check, [email]);
+
+    if (USER.rows.length > 0) {
       console.log("user already exists")
-      return res.status(400).json({message:"User already exists"});
+      return res.status(400).json({ message: "User already exists" });
     }
-    
-      let ImageUrl=[];
-    if(image){
-      Image = await uploadFile(image,"images/");
-      ImageUrl=[Image];
+
+    let ImageUrl = [];
+    if (image) {
+      Image = await uploadFile(image, "images/");
+      ImageUrl = [Image];
     }
-     // ImageUrlArray= [thereisnoimageforthisuser];
+    // ImageUrlArray= [thereisnoimageforthisuser];
     // Hash the user's password before storing it
 
-    if(!ImageUrl || ImageUrl.length===0){
-      return res.status(400).json({message:"Please try again later"})
+    if (!ImageUrl || ImageUrl.length === 0) {
+      return res.status(400).json({ message: "Please try again later" })
     }
-    const hashedPassword = await  bcrypt.hash(password, 10);
-      
+    const hashedPassword = await bcrypt.hash(password, 10);
+
 
     // Insert user details into the database
     const InsertQuery = `INSERT INTO users (name, email, hashed_password,images) 
        VALUES ($1, $2, $3, $4) RETURNING id `
     const result = await client.query(InsertQuery,
-      [name, email, hashedPassword,ImageUrl]
+      [name, email, hashedPassword, ImageUrl]
     );
-       
 
 
-    if(result.rows.length===0){
-      return res.status(400).json({message:"error while creating and account , please try again"})
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ message: "error while creating and account , please try again" })
     }
 
     res.status(200).json({ message: 'User registered successfully!' });
@@ -110,33 +110,35 @@ const image = req.file
 
 // User Login
 const Login = async (req, res) => {
-  
+
   try {
     const { email, password } = req.body;
- if(!email||!password){
-  return res.status(400).json({message:"All fields are necessary"})
- }
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are necessary" })
+    }
     // Check if the user exists in the database
     const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) return res.status(404).json({ message: 'User not found.' });
 
-// verifying the password 
+    // verifying the password 
     const user = result.rows[0];
-    
-    const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
- 
-    if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
-   // Create a JWT token for the newly logged in user
-    const token = jwt.sign({ id: result.rows[0].id,name:result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
-    
-res.cookie("auth-token", token, {
-  httpOnly:false,
-  secure: false, 
-  sameSite: "strict", 
-  maxAge: 3 * 60 * 60 * 1000,
-});
 
-   return res.status(200).json({ message: 'Login successful!' });
+    const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+
+    if (!isPasswordValid) return res.status(401).json({ message: 'Invalid email or password.' });
+    // Create a JWT token for the newly logged in user
+    const token = jwt.sign({ id: result.rows[0].id, name: result.rows[0].name, email }, process.env.JWT_SECRET, { expiresIn: '3h' });
+
+    res.cookie("auth-token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: ' luvlensebackend.onrender.com',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({ message: 'Login successful!',token:token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error logging in.' });
@@ -144,33 +146,33 @@ res.cookie("auth-token", token, {
 };
 
 // Forgot Password
-const ResetPassword =  async (req, res) => {
+const ResetPassword = async (req, res) => {
   // email and password are necessary are neccessary so that we can store it in the db
   try {
-  const { email ,newpassword} = req.body;
+    const { email, newpassword } = req.body;
 
-  if(!email || !password){
-    return res.status(400).json("All fields are mandatory");
-  }
+    if (!email || !password) {
+      return res.status(400).json("All fields are mandatory");
+    }
 
     // Check if the user exists
     const result = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
 
     if (result.rows.length === 0) return res.status(404).json({ message: 'User not found.' });
 
-    
-// if the user exists update his password in the database
 
-const UpdatedPassword = bcrypt.hash(newpassword,10);
+    // if the user exists update his password in the database
+
+    const UpdatedPassword = bcrypt.hash(newpassword, 10);
 
 
-// update the user in the database
+    // update the user in the database
 
-const Update = await client.query("UPDATE users SET password = $1 WHERE email = $2",[UpdatedPassword,email])
+    const Update = await client.query("UPDATE users SET password = $1 WHERE email = $2", [UpdatedPassword, email])
 
-if(Update.rows.length === 0){
-  return res.status(400).json({message:"error while updating your password"})
-}
+    if (Update.rows.length === 0) {
+      return res.status(400).json({ message: "error while updating your password" })
+    }
 
     // Create a password reset token that expires in 15 minutes
     // const resetToken = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET, { expiresIn: '15m' });
@@ -191,17 +193,17 @@ const WelcomeMessage = (req, res) => {
 
 //  send  user specific data only using userId
 
-const SendUserData = async(req,res)=>{
-  try{
-       const user_id= req.user.id;  
+const SendUserData = async (req, res) => {
+  try {
+    const user_id = req.user.id;
 
-      if(!user_id){
-        console.log("No userId")
-        return res.status(400).json({message:"No user id found"});
-      }
-   
+    if (!user_id) {
+      console.log("No userId")
+      return res.status(400).json({ message: "No user id found" });
+    }
 
-      const  FindQuery = `SELECT users.id, users.name, users.email, 
+
+    const FindQuery = `SELECT users.id, users.name, users.email, 
        COALESCE(users.about, '') AS about, 
        COALESCE(users.age, 0) AS age, 
        COALESCE(users.gender, '') AS gender, 
@@ -214,16 +216,16 @@ FROM users
 LEFT JOIN preferences ON preferences.user_id = users.id
 WHERE users.id = $1;;
 `;
-       client.query(FindQuery,[user_id],(err,result)=>{
-        if(err){
-          return res.status(500).json({message:"Internal server error"})
-        }
-        return res.status(200).json(result.rows);
-       });
-      
-   
+    client.query(FindQuery, [user_id], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: "Internal server error" })
+      }
+      return res.status(200).json(result.rows);
+    });
 
-  }catch(error){
+
+
+  } catch (error) {
     throw error;
   }
 }
@@ -274,21 +276,21 @@ const UpdateProfile = async (req, res) => {
         hobbies = EXCLUDED.hobbies,
         relationship_goal = EXCLUDED.relationship_goal;
     `;
-    client.query(UpdatePreferencesQuery, [User_Id, safeInterests, safeHobbies, relationShip],(err,result)=>{
-      if(err){
-        return res.status(500).json({message:"Internal server error"})
+    client.query(UpdatePreferencesQuery, [User_Id, safeInterests, safeHobbies, relationShip], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: "Internal server error" })
       }
-      if(result.rowCount>0){
+      if (result.rowCount > 0) {
         return res.status(200).json({ message: "Profile updated successfully" });
       }
     });
 
-    
+
 
   } catch (err) {
     console.error("Error in UpdateProfile:", err);
   }
-}; 
+};
 
 
 
@@ -296,41 +298,41 @@ const UpdateProfile = async (req, res) => {
 //function to upload media files like 5 images and videos
 
 
-const UploadMedia = async (req,res)=>{
-  try{
+const UploadMedia = async (req, res) => {
+  try {
 
 
-   if(!req.files || req.files.length <1){
-    return res.status(400).json({message:"Please choose atleast one image"});
-   }
-   
-   const Images = req.files;
-      let ImageUrl = [];
-   // if there are images only then upload em to the database
-   if (Images && Images.length > 0) {
-    ImageUrl = await Promise.all(
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ message: "Please choose atleast one image" });
+    }
+
+    const Images = req.files;
+    let ImageUrl = [];
+    // if there are images only then upload em to the database
+    if (Images && Images.length > 0) {
+      ImageUrl = await Promise.all(
         Images.map(file => uploadFile(file, "images/"))
-    );
-}
+      );
+    }
 
-  const User_Id =req.user.id;
+    const User_Id = req.user.id;
 
-   
 
-    if(!User_Id)return res.status(400).json({message:"User not found"});
-   
-     const query = `UPDATE users 
+
+    if (!User_Id) return res.status(400).json({ message: "User not found" });
+
+    const query = `UPDATE users 
 SET images = COALESCE(images, '{}') || $1 
 WHERE id = $2
 RETURNING images
 `
-   const data = await client.query(query,[ImageUrl,User_Id]);
+    const data = await client.query(query, [ImageUrl, User_Id]);
 
-   if(data.rowCount===0){
-    return res.status(400).json({message:"Error while inserting images"});
-   }
+    if (data.rowCount === 0) {
+      return res.status(400).json({ message: "Error while inserting images" });
+    }
 
- UserDataQuery = `SELECT users.id, users.name, users.email, 
+    UserDataQuery = `SELECT users.id, users.name, users.email, 
        COALESCE(users.about, '') AS about, 
        COALESCE(users.age, 0) AS age, 
        COALESCE(users.gender, '') AS gender, 
@@ -344,74 +346,74 @@ RETURNING images
       WHERE users.id = $1;;
 `;
 
-    const userProfile = await client.query(UserDataQuery,[User_Id]);
-    if(userProfile.rows.length===0){
-      return res.status(400).json({message:"User not found"});
+    const userProfile = await client.query(UserDataQuery, [User_Id]);
+    if (userProfile.rows.length === 0) {
+      return res.status(400).json({ message: "User not found" });
     }
 
-   return res.status(200).json(userProfile.rows)
-   
-  
-  }catch(error){
+    return res.status(200).json(userProfile.rows)
+
+
+  } catch (error) {
     throw error;
   }
 }
 
 
 // delete images
-const DeleteImage = async(req,res)=>{
-  try{
-   
+const DeleteImage = async (req, res) => {
+  try {
 
-   const imageUrl = req.body.url;
 
-   if(!imageUrl){
-    return res.status(400).json({message:"No image url found"})
-  };
+    const imageUrl = req.body.url;
+
+    if (!imageUrl) {
+      return res.status(400).json({ message: "No image url found" })
+    };
 
 
     const User_Id = req.user.id;
 
-    if(!User_Id){return res.status(400).json({message:"User not found"})};
-     
-    const query = `SELECT images from users WHERE id = $1`;
-    const data = await client.query(query,[User_Id]);
+    if (!User_Id) { return res.status(400).json({ message: "User not found" }) };
 
-    if(data.rows.length ===0){return res.status(400).json({message:"User not found"})};
+    const query = `SELECT images from users WHERE id = $1`;
+    const data = await client.query(query, [User_Id]);
+
+    if (data.rows.length === 0) { return res.status(400).json({ message: "User not found" }) };
 
     const images = data.rows[0].images;
 
 
     const IsValid = images.includes(imageUrl);
 
-  
-    if(!IsValid){
-      console.log("not a valid url or you are not authorized to delete this image")
-      return res.status(400).json({message:"Image cannot be deleted"});
-    }
-      
 
-   const deleteQuery = `UPDATE users 
+    if (!IsValid) {
+      console.log("not a valid url or you are not authorized to delete this image")
+      return res.status(400).json({ message: "Image cannot be deleted" });
+    }
+
+
+    const deleteQuery = `UPDATE users 
 SET images = array_remove(images, $1) 
 WHERE id = $2
 RETURNING *`
 
-const response = await client.query(deleteQuery,[imageUrl,User_Id]);
+    const response = await client.query(deleteQuery, [imageUrl, User_Id]);
 
-// deleting the image from the userdata 
-if(response.rowCount===0){
-  return res.status(400).json({message:"Error while deleting the image"});
-}
+    // deleting the image from the userdata 
+    if (response.rowCount === 0) {
+      return res.status(400).json({ message: "Error while deleting the image" });
+    }
 
-// deleting the image from firebase firestore
+    // deleting the image from firebase firestore
     const Order = await deleteFile(imageUrl);
 
-    if(!Order){
-      return res.status(400).json({message:"Error while deleting image"});
+    if (!Order) {
+      return res.status(400).json({ message: "Error while deleting image" });
 
     }
     // sending the update data of the user
-    const  UserDataQuery = `SELECT users.id, users.name, users.email, 
+    const UserDataQuery = `SELECT users.id, users.name, users.email, 
        COALESCE(users.about, '') AS about, 
        COALESCE(users.age, 0) AS age, 
        COALESCE(users.gender, '') AS gender, 
@@ -425,37 +427,37 @@ if(response.rowCount===0){
       WHERE users.id = $1;;
 `;
 
-    const userProfile = await client.query(UserDataQuery,[User_Id]);
-    if(userProfile.rows.length===0){
-      return res.status(400).json({message:"User not found"});
+    const userProfile = await client.query(UserDataQuery, [User_Id]);
+    if (userProfile.rows.length === 0) {
+      return res.status(400).json({ message: "User not found" });
     }
 
-   return res.status(200).json(userProfile.rows)
-   
-  }catch(error){
+    return res.status(200).json(userProfile.rows)
+
+  } catch (error) {
     throw error;
   }
 }
 
 // download media files
 
-const DownloadMedia = async (req,res)=>{
-  try{
+const DownloadMedia = async (req, res) => {
+  try {
 
     const imageUrl = req.body.url
     console.log(imageUrl)
-    if(!imageUrl){
-      return res.status(400).json({message:"This request cannot be processed"})
+    if (!imageUrl) {
+      return res.status(400).json({ message: "This request cannot be processed" })
     }
 
-    
 
 
-  }catch(error){
+
+  } catch (error) {
     throw new Error(error)
   }
 }
 
-exports.data = {ResetPassword,Login,Register,WelcomeMessage,upload,UploadMedia,SendUserData,UpdateProfile,DeleteImage,DownloadMedia,}
+exports.data = { ResetPassword, Login, Register, WelcomeMessage, upload, UploadMedia, SendUserData, UpdateProfile, DeleteImage, DownloadMedia, }
 
 

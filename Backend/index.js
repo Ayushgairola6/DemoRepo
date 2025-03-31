@@ -22,22 +22,41 @@ const io = new Server(httpServer, {
 //auth middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies["auth-token"];
-
-  if (!token) return res.status(400).send("Access denied. No token provided.");
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      if (err.name === "TokenExpiredError") {
-        return res.status(401).json({ message: "Token has expired" });
-      } else if (err.name === "JsonWebTokenError") {
-        return res.status(401).json({ message: "Invalid token" });
-      } else {
-        return res.status(500).json({ message: "Internal Server error" });
+  const fallbackToken = req.header.authorization.split(" ")[1];
+  if(!token || !fallbackToken){
+    return res.status(400).json({message:"NO auth token found"});
+  }
+  if (token ) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(401).json({ message: "Token has expired" });
+        } else if (err.name === "JsonWebTokenError") {
+          return res.status(401).json({ message: "Invalid token" });
+        } else {
+          return res.status(500).json({ message: "Internal Server error" });
+        }
       }
-    }
-    req.user = decoded;
-    next();
-  });
+      req.user = decoded;
+      next();
+    });
+  }else if(fallbackToken){
+    jwt.verify(fallbackToken, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(401).json({ message: "Token has expired" });
+        } else if (err.name === "JsonWebTokenError") {
+          return res.status(401).json({ message: "Invalid token" });
+        } else {
+          return res.status(500).json({ message: "Internal Server error" });
+        }
+      }
+      req.user = decoded;
+      next();
+    });
+  }
+
+
 };
 
 
@@ -63,22 +82,26 @@ const {CreateReviewTable} = require("./Model/reviewsTable")
 //  have been given the access to communicate with this api
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://luvlens.netlify.app"
+  "https://luvlens.netlify.app",
+   "https://luvlensebackend.onrender.com"
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true, // Allow credentials (cookies)
-  allowedHeaders: ["Content-Type", "Authorization"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+  exposedHeaders: ['set-cookie'], // Important for some clients
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Add OPTIONS
 }));
-
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
