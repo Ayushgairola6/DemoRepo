@@ -6,8 +6,8 @@ const client = new Pool({
   connectionString: process.env.PG_URI,
   ssl: { rejectUnauthorized: false },
   max: 20, 
-  idleTimeoutMillis: 30000, 
-  connectionTimeoutMillis: 7000, 
+  // idleTimeoutMillis: 30000, 
+  // connectionTimeoutMillis: 7000, 
 });
 // connect to the database
 client

@@ -57,6 +57,7 @@ const { PaymentRouter } = require('./Routers/PaymentRouter')
 const chatRouter = require("./Routers/ChatRouter");
 const { quizRouter } = require("./Routers/QuizRouter")
 const ReviewRouter = require("./Routers/ReviewRouter");
+const {PostRouter} = require("./Routers/PostsRouter");
 // importing tables
 const userTable = require("./Model/UsersTable");
 const LikeTable = require('./Model/Likestable');
@@ -64,14 +65,15 @@ const matchTable = require('./Model/Matchestable');
 const { createMediaTable } = require("./Model/MediaTable");
 const preference = require("./Model/PreferenceTable");
 const {CreateReviewTable} = require("./Model/reviewsTable")
+const {createPostsTable} = require("./Model/PostsTable");
 
-// CreateReviewTable();
 // cors to establish a connection between front end and backend only two domains
 //  have been given the access to communicate with this api
 const allowedOrigins = [
   "http://localhost:5173",
   "https://luvlens.netlify.app",
-   "http://localhost:8080"
+   "https://luvlensebackend.onrender.com",
+   "https://www.luvlense.com"
 ];
 
 app.use(cors({
@@ -107,7 +109,7 @@ app.use(ReviewRouter.route.ReviewRouter);
 // app.use(PaymentRouter);
 app.use(quizRouter);
 app.use(chatRouter.route.ChatRouter)
-
+app.use(PostRouter);
 
 
 
