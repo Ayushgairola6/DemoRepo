@@ -12,11 +12,9 @@ io.use((socket, next) => {
     const tokenFromCookie = cookies["auth-token"];
     const tokenFromAuth = socket.handshake.auth?.token; // Handle missing auth field safely
     const finalToken = tokenFromCookie || tokenFromAuth; // Prefer cookies but fallback to auth token
-
     if (!finalToken) {
       return next(new Error("Authentication error: No token provided"));
     }
-
     // Verify JWT token
     jwt.verify(finalToken, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
@@ -34,6 +32,7 @@ io.use((socket, next) => {
 
 // client sends a connection event and we receive it
 io.on("connection", (socket) => {
+
   if (!socket.user || !socket.user.id || !socket.user.name) {
     console.log("Invalid socket user data");
     return socket.disconnect(true);
@@ -42,6 +41,54 @@ io.on("connection", (socket) => {
   const user1 = socket.user.id;
   const user1name = socket.user.name;
 
+  //instance for liking posts
+  socket.on("likePost", async ({ post_id, userId }) => {
+    try {
+      // both post id an user id are necessary
+      if (!userId || !post_id) {
+        socket.emit("likeResponse", { status: 400, message: "Unauthorized" });
+        return;
+      }
+      
+      // Check if the post has already been liked by this user
+      const checkQuery = `SELECT * FROM postlikes WHERE post_id = $1 AND user_id = $2`;
+      const response = await client.query(checkQuery, [post_id, userId]);
+      
+      let message = "";
+      // If already liked, remove the like
+      if (response.rows.length > 0) {
+        const deleteQuery = `DELETE FROM postlikes WHERE post_id = $1 AND user_id = $2`;
+        const deleteResult = await client.query(deleteQuery, [post_id, userId]);
+        if (deleteResult.rowCount === 0) {
+          socket.emit("likeResponse", { status: 400, message: "Error while unliking the post" });
+          return;
+        }
+        message = "Unliked successfully";
+      } else {
+        // If not liked, insert a like
+        const insertQuery = `INSERT INTO postlikes (user_id, post_id) VALUES ($1, $2)`;
+        const insertResult = await client.query(insertQuery, [userId, post_id]);
+        if (insertResult.rowCount === 0) {
+          socket.emit("likeResponse", { status: 400, message: "Error could not like the post" });
+          return;
+        }
+        message = "Liked successfully";
+      }
+      
+      // Now, get the updated like count for the post
+      const countQuery = `SELECT COUNT(*) AS like_count FROM postlikes WHERE post_id = $1`;
+      const countResult = await client.query(countQuery, [post_id]);
+      const likeCount = countResult.rows[0].like_count;
+      
+      // Emit the response with the updated like count
+      socket.emit("likeResponse", { status: 200, message, likeCount,post_id });
+    } catch (error) {
+      console.error(error);
+      socket.emit("likeResponse", { status: 500, message: "Internal server error" });
+    }
+  });
+
+  // instance for chats
   socket.on("joinChat", (user2) => {
     if (!user2 || !user2.selectedUser?.id || !user2.selectedUser?.name) {
       console.log("User2 not found or invalid");
@@ -132,6 +179,10 @@ io.on("connection", (socket) => {
           });
         });
       });
+
+
+
+
 
     } catch (error) {
       console.error("General socket error:", error);

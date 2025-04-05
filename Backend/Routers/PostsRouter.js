@@ -8,4 +8,5 @@ PostRouter.post("/create/post/",verifyToken,controller2.data.upload.single("medi
 .get("/get/posts/all/",verifyToken,controller.data.SendPosts)
 .post("/add/comment/new",verifyToken,controller.data.AddComment)
 .post("/posts/likes/:id",verifyToken,controller.data.LikePost)
+.get("/post/comments/:post_id",verifyToken,controller.data.getPostComments);
 module.exports ={PostRouter};

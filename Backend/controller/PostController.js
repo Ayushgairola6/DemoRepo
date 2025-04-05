@@ -44,23 +44,12 @@ const SendPosts = async (req, res) => {
     p.id,
     p.created_at, 
     p.mediaUrl, 
-    COUNT(pl.user_id) AS like_count, -- Count the likes per post
-    ARRAY_AGG(
-        jsonb_build_object(
-            'comment_id', c.id, 
-            'user_id', c.user_id, 
-            'content', c.content, 
-            'created_at', c.created_at
-        )
-    ) AS comments -- Aggregate comments as an array of JSON objects
-FROM 
+    COUNT(pl.user_id) AS like_count FROM 
     posts p
 LEFT JOIN 
     users u ON u.id = p.user_id
 LEFT JOIN 
     postlikes pl ON pl.post_id = p.id
-LEFT JOIN 
-    comments c ON c.post_id = p.id -- Fetch comments for each post
 GROUP BY 
     u.name, u.images, p.title, p.caption, p.hashtag, p.created_at, p.mediaUrl,p.id
 ORDER BY 
@@ -108,17 +97,17 @@ const LikePost = async (req, res) => {
         const post_id = req.params.id;
 
         // check if post has alrady been liked
-         const check = `SELECT * FROM postlikes WHERE post_id = $1 AND user_id = $2`;
-         const response = await client.query(check,[post_id,userId]);
+        const check = `SELECT * FROM postlikes WHERE post_id = $1 AND user_id = $2`;
+        const response = await client.query(check, [post_id, userId]);
         //  if post has been already liked remove it
-         if(response.rows.length>0){
+        if (response.rows.length > 0) {
             const query = `DELETE FROM postlikes WHERE post_id = $1 AND user_id = $2`;
-            const data = await client.query(query,[post_id,userId]);
-            if(data.rowCount===0){
+            const data = await client.query(query, [post_id, userId]);
+            if (data.rowCount === 0) {
                 return res.status(400).json({ message: "Error while unliking the post" });
             }
             return res.status(200).json({ message: "Unliked successfully" });
-         }
+        }
 
         const query = `INSERT INTO postlikes (user_id,post_id) VALUES ($1,$2)`;
         const data = await client.query(query, [userId, post_id]);
@@ -131,4 +120,27 @@ const LikePost = async (req, res) => {
         throw new Error(error);
     }
 }
-exports.data = { CreatePost, SendPosts ,AddComment,LikePost}
+
+const getPostComments = async (req, res) => {
+    try {
+        const post_id = req.params.post_id;
+        if (!post_id) return res.status(400).json({ message: "Post Id cannot be found" });
+
+        const query = `SELECT 
+  c.created_at, 
+  c.post_id, 
+  c.content, 
+  u.name 
+FROM comments c 
+LEFT JOIN users u ON c.user_id = u.id 
+WHERE post_id = $1 
+ORDER BY RANDOM() 
+LIMIT 5;`
+        const response = await client.query(query, [post_id]);
+        return res.status(200).json(response.rows);s
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+exports.data = { CreatePost, SendPosts, AddComment, LikePost ,getPostComments}
