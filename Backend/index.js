@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config();
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173", "https://luvlens.netlify.app"],
+    origin: ["http://localhost:5173", "https://luvlens.netlify.app","https://luvlense.com","www.luvlense.com"],
     credentials: true,
   },
 });
@@ -72,8 +72,9 @@ const {createPostsTable} = require("./Model/PostsTable");
 const allowedOrigins = [
   "http://localhost:5173",
   "https://luvlens.netlify.app",
-   "http://localhost:8080",
-   "https://www.luvlense.com"
+   "https://luvlensebackend.onrender.com",
+   "https://www.luvlense.com",
+   "https://luvlense.com"
 ];
 
 app.use(cors({
