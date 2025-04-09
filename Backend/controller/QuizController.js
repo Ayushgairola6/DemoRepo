@@ -22,11 +22,11 @@ GROUP BY q.id, q.category, q.question
 ORDER BY MIN(q.id)`;
 
     const data = await client.query(query);
-    if(data.rows.length===0){
+    if (data.rows.length === 0) {
       return res.status(200).json([]);
-    }else{
+    } else {
       return res.status(200).json(data.rows);
-      
+
     }
 
   } catch (error) {
@@ -86,12 +86,11 @@ const GetQuizResult = async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(400).json({ message: "Error updating responses" });
     }
-    const users = await SendUsers(validResponses, UserId)
+    const users = await SendUsers(validResponses, UserId, questionIds, answerIds)
 
     if (!users) {
       return res.status(200).json({ message: "Your thoughts are unique you just need to wait to find the right person" })
     }
-    console.log(users)
     return res.status(200).json(users);
 
   } catch (err) {
@@ -103,7 +102,7 @@ const GetQuizResult = async (req, res) => {
 // function to get users whose answer matches users answerIds
 
 
-const SendUsers = async (validResponses, UserId) => {
+const SendUsers = async (validResponses, UserId, questionIds, answerIds) => {
   try {
     const questionAnswerPairs = validResponses.map(r => `(${r.question_id}, ${r.option_id})`).join(", ");
     const totalQuestions = validResponses.length;
@@ -112,26 +111,47 @@ const SendUsers = async (validResponses, UserId) => {
       return res.status(400).json({ message: "Error while getting matches please try again later" })
     }
 
-    const secondquery = `
-       WITH matched_users AS (
-        SELECT user_id
-        FROM quiz_response
-        WHERE (question_id, answer_id) IN (${questionAnswerPairs})
-        GROUP BY user_id
-        HAVING COUNT(*) = $1
-    )
-    SELECT u.id, u.name, u.email, u.age, u.gender, u.about, u.location, u.images,
-           p.country, p.state, p.city, p.relationship_goal, p.hobbies, p.interests
-    FROM users u
-    JOIN preferences p ON u.id = p.user_id
-    WHERE u.id IN (SELECT user_id FROM matched_users)
-    AND u.id != $2;
-    `;
+    const secondquery = ` WITH user_answers AS (
+        SELECT q.question_id, a.answer_id
+        FROM UNNEST($1::int[]) WITH ORDINALITY AS q(question_id, ord)
+        JOIN UNNEST($2::int[]) WITH ORDINALITY AS a(answer_id, ord)
+          ON q.ord = a.ord
+      ),
+      matched_users AS (
+        SELECT qr.user_id, COUNT(*) AS matched_count
+        FROM quiz_response qr
+        JOIN user_answers ua 
+          ON qr.question_id = ua.question_id 
+         AND qr.answer_id = ua.answer_id
+        WHERE qr.user_id != $3
+        GROUP BY qr.user_id
+        HAVING COUNT(*) > 0
+      )
+      SELECT 
+        u.id, 
+        u.name, 
+        u.email, 
+        u.age, 
+        u.gender, 
+        u.about, 
+        u.location, 
+        u.images,
+        p.country, 
+        p.state, 
+        p.city, 
+        p.relationship_goal, 
+        p.hobbies, 
+        p.interests,
+        FLOOR((mu.matched_count::decimal / $4) * 10) AS match_score
+      FROM matched_users mu
+      JOIN users u ON mu.user_id = u.id
+      JOIN preferences p ON u.id = p.user_id
+      ORDER BY match_score DESC;    `;
 
-    const accounts = await client.query(secondquery, [totalQuestions, UserId]);
+    const accounts = await client.query(secondquery, [questionIds, answerIds, UserId, totalQuestions]);
     return accounts.rows;
 
-    const query = `SELECT u.username,u.images from users u LEFT JOIN quiz_response q ON q `
+ 
   } catch (error) {
     throw error
   }
