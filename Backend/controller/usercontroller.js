@@ -136,7 +136,7 @@ const Login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: 'Login successful!',token:token });
+    return res.status(200).json({ message: 'Login successful!', token: token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error logging in.' });
@@ -357,7 +357,110 @@ RETURNING images
   }
 }
 
+//  send all like request to the user
+const SendSelectedUser = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    if (!user_id) {
+      return res.status(400).json({ message: "User not found!" });
+    }
 
+    const query = `SELECT u.name, u.images, l.user_id
+FROM likes l
+LEFT JOIN users u ON l.user_id = u.id
+WHERE l.liked_user_id = $1
+AND NOT EXISTS (
+  SELECT 1
+  FROM matches m
+  WHERE 
+    (m.user1_id = l.user_id AND m.user2_id = l.liked_user_id)
+    OR 
+    (m.user1_id = l.liked_user_id AND m.user2_id = l.user_id)
+)
+`;
+    const acc = await client.query(query, [user_id]);
+
+    return res.status(200).json(acc.rows);
+
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+
+// handle like requests
+
+const AcceptMatchRequest = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    const UserwhoRequested = req.params.requested_user;
+
+    if (!user_id || !UserwhoRequested) {
+      return res.status(400).json({ message: 'Error user not found' });
+    }
+
+    // Check if reverse like already exists
+    const reverseLikeQuery = `
+      SELECT 1 FROM likes 
+      WHERE user_id = $1 AND liked_user_id = $2
+    `;
+    const reverseLike = await client.query(reverseLikeQuery, [UserwhoRequested, user_id]);
+
+    // Insert current user's like
+    const insertQuery = `
+      INSERT INTO likes (user_id, liked_user_id) 
+      VALUES ($1, $2) 
+      ON CONFLICT DO NOTHING;
+    `;
+    const likeInsert = await client.query(insertQuery, [user_id, UserwhoRequested]);
+
+    if (likeInsert.rowCount === 0) {
+      return res.status(400).json({ message: "You already accepted this request" });
+    }
+
+    if (reverseLike.rowCount > 0) {
+      // It's a match!
+      const insertMatchQuery = `
+        INSERT INTO matches (user1_id, user2_id)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING;
+      `;
+      await client.query(insertMatchQuery, [user_id, UserwhoRequested]);
+      return res.status(200).json({ message: "It's a match!" });
+    }
+
+    return res.status(200).json({ message: "Invitation accepted" });
+
+  } catch (error) {
+    console.error("Match accept error:", error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+const RejectRequests = async (req, res) => {
+  try {
+
+    const user_id = req.user.id;
+    const RejectedUser = req.params.rejecteduser;
+
+    if (!user_id || !RejectedUser) {
+      return res.status(400).json({ message: "Error user not found!" });
+    }
+
+    const query = `DELETE FROM likes 
+WHERE 
+  (user_id = $1 AND liked_user_id = $2) 
+  OR 
+  (user_id = $2 AND liked_user_id = $1);`
+
+    const data = await client.query(query, [user_id, RejectedUser]);
+
+    return res.status(200).json({ message: "Rejected request successfully!" })
+
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 // delete images
 const DeleteImage = async (req, res) => {
   try {
@@ -456,6 +559,6 @@ const DownloadMedia = async (req, res) => {
   }
 }
 
-exports.data = { ResetPassword, Login, Register, WelcomeMessage, upload, UploadMedia, SendUserData, UpdateProfile, DeleteImage, DownloadMedia, }
+exports.data = { ResetPassword, Login, Register, WelcomeMessage, upload, UploadMedia, SendUserData, UpdateProfile, DeleteImage, DownloadMedia, SendSelectedUser, AcceptMatchRequest ,RejectRequests}
 
 

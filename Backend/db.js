@@ -1,20 +1,25 @@
-const {Pool  } = require("pg");
+const { Pool } = require("pg");
 require("dotenv").config();
 
-// creating a pg pool so that it can handle promises on its own
 const client = new Pool({
   connectionString: process.env.PG_URI,
   ssl: { rejectUnauthorized: false },
-  max: 20, 
-  // idleTimeoutMillis: 30000, 
-  // connectionTimeoutMillis: 7000, 
+  max: 10, // 10 is enough unless you're scaling
+  idleTimeoutMillis: 30000, // free up unused connections after 30s
+  connectionTimeoutMillis: 5000, // wait max 5s to get a connection
 });
-// connect to the database
+
+// Listen for errors on idle clients
+client.on("error", (err) => {
+  console.error("Unexpected idle client error:", err);
+  // Optionally: notify you via email, log to monitoring, etc.
+});
+
+// Just for initial test
 client
-  .query("SELECT 1") 
+  .query("SELECT 1")
   .then(() => console.log("Connected to the database"))
   .catch((err) => console.error("Database connection error:", err.stack));
 
-
-
-module.exports = {client };
+// Export the pool (not "client")
+module.exports = { client };

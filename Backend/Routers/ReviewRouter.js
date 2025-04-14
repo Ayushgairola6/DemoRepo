@@ -5,6 +5,6 @@ const {verifyToken} = require("../index.js")
 
 
 ReviewRouter.post("/review/data",verifyToken,controller.data.RecieveReviews)
-ReviewRouter.get("/reviews/get/all",verifyToken,controller.data.SendReviews)
+ReviewRouter.get("/reviews/get/all",controller.data.SendReviews)
 
 exports.route ={ReviewRouter};

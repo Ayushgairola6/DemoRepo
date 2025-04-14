@@ -37,10 +37,15 @@ io.on("connection", (socket) => {
     console.log("Invalid socket user data");
     return socket.disconnect(true);
   }
-
+  socket.join(socket.user.id.toString(), () => {
+    console.log(`User ${socket.user} has joined the room`);
+  });
+  console.log(`User ${socket.user.name} joined room ${socket.user.id}`);
   const user1 = socket.user.id;
   const user1name = socket.user.name;
 
+
+  socket.emit("userConnected", { user: socket.user })
   //instance for liking posts
   socket.on("likePost", async ({ post_id, userId }) => {
     try {
@@ -49,11 +54,11 @@ io.on("connection", (socket) => {
         socket.emit("likeResponse", { status: 400, message: "Unauthorized" });
         return;
       }
-      
+
       // Check if the post has already been liked by this user
       const checkQuery = `SELECT * FROM postlikes WHERE post_id = $1 AND user_id = $2`;
       const response = await client.query(checkQuery, [post_id, userId]);
-      
+
       let message = "";
       // If already liked, remove the like
       if (response.rows.length > 0) {
@@ -74,19 +79,45 @@ io.on("connection", (socket) => {
         }
         message = "Liked successfully";
       }
-      
+
       // Now, get the updated like count for the post
       const countQuery = `SELECT COUNT(*) AS like_count FROM postlikes WHERE post_id = $1`;
       const countResult = await client.query(countQuery, [post_id]);
       const likeCount = countResult.rows[0].like_count;
-      
+
       // Emit the response with the updated like count
-      socket.emit("likeResponse", { status: 200, message, likeCount,post_id });
+      socket.emit("likeResponse", { status: 200, message, likeCount, post_id });
     } catch (error) {
       console.error(error);
       socket.emit("likeResponse", { status: 500, message: "Internal server error" });
     }
   });
+
+  // instance for emitting notifications on like
+
+  socket.on("likedProfile", (data) => {
+
+    const { user1, user2, user1name } = data;
+    console.log(data);
+    if (!user1 || !user2 || !user1name) {
+      console.log("some data is missing")
+      return socket.emit("likeError", { message: "Both users are required" });
+    }
+
+
+    socket.to(user2.toString()).emit("A_new_match", {
+      likedBy: user1name,
+      userID: user1,
+      message: "A new like"
+    });
+    console.log(`Emiting the notification to ${user2}`)
+
+
+  });
+
+
+
+
 
   // instance for chats
   socket.on("joinChat", (user2) => {
@@ -264,5 +295,7 @@ const SendChats = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
 
 exports.data = { SendMatches, SendChats };

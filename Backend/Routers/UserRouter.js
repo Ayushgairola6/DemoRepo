@@ -1,23 +1,25 @@
 const express = require("express");
-const UserRouter  = express.Router();
+const UserRouter = express.Router();
 const controller = require("../controller/usercontroller")
-const {verifyToken} = require("../index.js")
+const { verifyToken } = require("../index.js")
 const jwt = require('jsonwebtoken');
-const dotenv =require("dotenv").config();
+const dotenv = require("dotenv").config();
 
-UserRouter.post("/Register",controller.data.upload.single("image"),controller.data.Register)
-.post("/login",controller.data.Login)
-.post("/resetPassword",verifyToken,controller.data.ResetPassword)
-.get("/welcome",controller.data.WelcomeMessage)
-.post("/media/upload/images",verifyToken,controller.data.upload.array("files"),controller.data.UploadMedia)
-.get("/profile/data",verifyToken,controller.data.SendUserData)
-.post("/profile/update",verifyToken,controller.data.UpdateProfile)
-.post("/media/delete",verifyToken,controller.data.DeleteImage)
-.post("/media/download",verifyToken,controller.data.DownloadMedia);
-
+UserRouter.post("/Register", controller.data.upload.single("image"), controller.data.Register)
+  .post("/login", controller.data.Login)
+  .post("/resetPassword", verifyToken, controller.data.ResetPassword)
+  .get("/welcome", controller.data.WelcomeMessage)
+  .post("/media/upload/images", verifyToken, controller.data.upload.array("files"), controller.data.UploadMedia)
+  .get("/profile/data", verifyToken, controller.data.SendUserData)
+  .post("/profile/update", verifyToken, controller.data.UpdateProfile)
+  .post("/media/delete", verifyToken, controller.data.DeleteImage)
+  .post("/media/download", verifyToken, controller.data.DownloadMedia)
+  .get("/all/requests", verifyToken, controller.data.SendSelectedUser)
+  .post("/accept/:requested_user", verifyToken, controller.data.AcceptMatchRequest)
+  .delete("/reject/request/:rejecteduser", verifyToken, controller.data.RejectRequests);
 //verify the user token
-UserRouter.post('/verify',verifyToken,(req,res)=>{
-	const token = req.cookies["auth-token"];
+UserRouter.post('/verify', verifyToken, (req, res) => {
+  const token = req.cookies["auth-token"];
   const fallbackToken = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
   const finalToken = token || fallbackToken; // Prioritize cookie token, fallback to header
 
@@ -38,6 +40,7 @@ UserRouter.post('/verify',verifyToken,(req,res)=>{
 
     return res.status(200).json({ message: "Token Verified", user: decoded });
 
-})});
+  })
+});
 
-exports.Route = {UserRouter};
+exports.Route = { UserRouter };

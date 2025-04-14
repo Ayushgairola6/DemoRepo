@@ -72,7 +72,7 @@ const {createPostsTable} = require("./Model/PostsTable");
 const allowedOrigins = [
   "http://localhost:5173",
   "https://luvlens.netlify.app",
-   "http://localhost:8080",
+   "https://luvlensebackend.onrender.com",
    "https://www.luvlense.com",
    "https://luvlense.com",
    "http://luvlense.com"
