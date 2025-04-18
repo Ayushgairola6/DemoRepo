@@ -16,7 +16,8 @@ UserRouter.post("/Register", controller.data.upload.single("image"), controller.
   .post("/media/download", verifyToken, controller.data.DownloadMedia)
   .get("/all/requests", verifyToken, controller.data.SendSelectedUser)
   .post("/accept/:requested_user", verifyToken, controller.data.AcceptMatchRequest)
-  .delete("/reject/request/:rejecteduser", verifyToken, controller.data.RejectRequests);
+  .delete("/reject/request/:rejecteduser", verifyToken, controller.data.RejectRequests)
+  .get("/find/user/data/:RequestedUser", verifyToken, controller.data.SendSpecifiProfile);
 //verify the user token
 UserRouter.post('/verify', verifyToken, (req, res) => {
   const token = req.cookies["auth-token"];

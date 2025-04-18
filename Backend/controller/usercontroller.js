@@ -212,7 +212,7 @@ const SendUserData = async (req, res) => {
        COALESCE(preferences.relationship_goal, '') AS relationship_goal
 FROM users
 LEFT JOIN preferences ON preferences.user_id = users.id
-WHERE users.id = $1;;
+WHERE users.id = $1;
 `;
     client.query(FindQuery, [user_id], (err, result) => {
       if (err) {
@@ -546,7 +546,6 @@ const DownloadMedia = async (req, res) => {
   try {
 
     const imageUrl = req.body.url
-    console.log(imageUrl)
     if (!imageUrl) {
       return res.status(400).json({ message: "This request cannot be processed" })
     }
@@ -559,6 +558,38 @@ const DownloadMedia = async (req, res) => {
   }
 }
 
-exports.data = { ResetPassword, Login, Register, WelcomeMessage, upload, UploadMedia, SendUserData, UpdateProfile, DeleteImage, DownloadMedia, SendSelectedUser, AcceptMatchRequest ,RejectRequests}
+const SendSpecifiProfile = async (req, res) => {
+  try {
+
+    const userTobeFetched = req.params.RequestedUser;
+    if (!userTobeFetched) return res.status(400).json({ message: "User not found!" });
+
+    const query = `SELECT users.id, users.name, users.email, 
+       COALESCE(users.about, '') AS about, 
+       COALESCE(users.age, 0) AS age, 
+       COALESCE(users.gender, '') AS gender, 
+       COALESCE(users.location, '') AS location, 
+       COALESCE(users.images, ARRAY[]::text[]) AS images,
+       COALESCE(preferences.interests, ARRAY[]::text[]) AS interests, 
+       COALESCE(preferences.hobbies, ARRAY[]::text[]) AS hobbies, 
+       COALESCE(preferences.relationship_goal, '') AS relationship_goal
+FROM users
+LEFT JOIN preferences ON preferences.user_id = users.id
+WHERE users.id = $1; `
+
+    const data = await client.query(query, [userTobeFetched]);
+
+
+    if (!data.rows.length === 0) {
+      return res.status(400).json({ message: "User data could not be found! Please try again later!" });
+    }
+    console.log(data.rows);    return res.status(200).json(data.rows);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+
+exports.data = { ResetPassword, Login, Register, WelcomeMessage, upload, UploadMedia, SendUserData, UpdateProfile, DeleteImage, DownloadMedia, SendSelectedUser, AcceptMatchRequest, RejectRequests ,SendSpecifiProfile}
 
 

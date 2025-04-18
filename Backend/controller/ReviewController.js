@@ -6,7 +6,6 @@ const RecieveReviews = async(req, res) => {
         if (!userID) { return res.status(400).json({ message: "User Id not found" }); }
 
         const { review ,rating} = req.body;
-        // console.log(review);
         if (!review || !rating) { return res.status(401).json({ message: "All fields are mandatory" }); }
       
         const query =`INSERT INTO reviews (user_id,text,rating) VALUES ($1,$2,$3)`

@@ -38,9 +38,7 @@ io.on("connection", (socket) => {
     return socket.disconnect(true);
   }
   socket.join(socket.user.id.toString(), () => {
-    console.log(`User ${socket.user} has joined the room`);
   });
-  console.log(`User ${socket.user.name} joined room ${socket.user.id}`);
   const user1 = socket.user.id;
   const user1name = socket.user.name;
 
